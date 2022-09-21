@@ -1,0 +1,193 @@
+syntax = "proto3";
+
+package topService;
+
+option go_package="./TopService";
+
+import "google/protobuf/timestamp.proto";
+
+// Необходимо каждые **N** секунд выдавать информацию, усредненную за последние **M** секунд.
+message SnapshotRequest {
+    int32 N = 1;
+    int32 M = 2;
+}
+
+service TopService {
+    rpc StreamSnapshots(SnapshotRequest) returns (stream Snapshot) {};
+}
+
+message Snapshot {
+    google.protobuf.Timestamp startTime = 1;
+    google.protobuf.Timestamp finishTime = 2;
+    Cpu cpu = 3;
+    repeated DiskIO disksIO = 4;
+    repeated DiskInfo disksInfo = 5;
+    repeated ConnectInfo connectsInfo = 6;
+    repeated ConnectState connectsStates = 7;
+    repeated TopTalkerByProtocol topTalkersByProtocol = 8;
+}
+// ---------------------------------
+
+// - Средняя загрузка системы (load average).
+// - Средняя загрузка CPU (%user_mode, %system_mode, %idle).
+
+// root@9202f26c9a6e:/# top -b -n1
+// top - 21:13:05 up  2:08,  0 users,  load average: 0.77, 0.49, 0.35
+// Tasks:   2 total,   1 running,   1 sleeping,   0 stopped,   0 zombie
+// %Cpu(s):  1.5 us,  1.1 sy,  0.0 ni, 96.9 id,  0.1 wa,  0.0 hi,  0.4 si,  0.0 st
+// KiB Mem : 15715104 total,   634672 free,  6534920 used,  8545512 buff/cache
+// KiB Swap: 16777212 total, 16775932 free,     1280 used.  8555732 avail Mem 
+
+//     PID USER      PR  NI    VIRT    RES    SHR S  %CPU %MEM     TIME+ COMMAND
+//       1 root      20   0   18516   3496   3076 S   0.0  0.0   0:00.11 bash
+//     140 root      20   0   36500   3172   2816 R   0.0  0.0   0:00.00 top
+
+message Cpu { // top -b -n1
+    CpuAvg avg = 1;
+    CpuState state = 2;
+}
+
+message CpuState {
+    float user = 1; // 1.5
+    float system = 2; // 1.1
+    float idle = 3;  // 96.9
+    // float nice = 3;
+    // float iowait = 4;
+    // float hardwareIRQ = 5;
+    // float softwareInt = 6;
+    // float stealTime = 7;
+}
+
+message CpuAvg {
+    float min = 1; // The first value depicts the average load on the CPU for the last minute.
+    float five = 2; // The second gives us the average load for the last 5-minute interval
+    float fifteen = 3; // The third value gives us the 15-minute average load
+}
+// ---------------------------------------------------------
+
+// Информация о дисках по каждой файловой системе:
+// - использовано мегабайт, % от доступного количества;
+// - использовано inode, % от доступного количества.
+
+// root@9202f26c9a6e:/# iostat -d -k
+// Linux 5.18.17-1-MANJARO (9202f26c9a6e)  09/19/22        _x86_64_        (16 CPU)
+
+// Device             tps    kB_read/s    kB_wrtn/s    kB_read    kB_wrtn
+// nvme0n1          52.86       665.63       780.25    4983485    5841621
+
+// root@9202f26c9a6e:/# df -k
+// Filesystem     1K-blocks     Used Available Use% Mounted on
+// /dev/nvme0n1p8  65339392 47983772  12233860  80% /
+// tmpfs              65536        0     65536   0% /dev
+// shm                65536        0     65536   0% /dev/shm
+// /dev/nvme0n1p8  65339392 47983772  12233860  80% /etc/hosts
+// tmpfs            7857552        0   7857552   0% /proc/asound
+// tmpfs            7857552        0   7857552   0% /proc/acpi
+// tmpfs            7857552        0   7857552   0% /proc/scsi
+// tmpfs            7857552        0   7857552   0% /sys/firmware
+
+// root@9202f26c9a6e:/# df -i
+// Filesystem      Inodes IUsed   IFree IUse% Mounted on
+// /dev/nvme0n1p8       0     0       0     - /
+// tmpfs          1964388    17 1964371    1% /dev
+// shm            1964388     1 1964387    1% /dev/shm
+// /dev/nvme0n1p8       0     0       0     - /etc/hosts
+// tmpfs          1964388     1 1964387    1% /proc/asound
+// tmpfs          1964388     1 1964387    1% /proc/acpi
+// tmpfs          1964388     1 1964387    1% /proc/scsi
+// tmpfs          1964388     1 1964387    1% /sys/firmware
+
+message DiskInfo {
+    string name = 1; // /dev/nvme0n1p3     df -k
+    int64 usedBytes = 2; // 39131452
+    int64 availableBytes = 3; // 64169664
+    string usageBytes = 4; // 38%
+    int64 usedInodes = 5; // 272911         df -i
+    int64 availableInodes = 6; // 64224433
+    string  usageInodes = 7; // 1% 
+}
+// -----------------------------------------------------
+
+// Загрузка дисков:
+// - tps (transfers per second);
+// - KB/s (kilobytes (read+write) per second);
+
+// root@9202f26c9a6e:/# iostat -d -k
+// Linux 5.18.17-1-MANJARO (9202f26c9a6e)  09/19/22        _x86_64_        (16 CPU)
+// Device             tps    kB_read/s    kB_wrtn/s    kB_read    kB_wrtn
+// nvme0n1          52.86       665.63       780.25    4983485    5841621
+
+message DiskIO {
+    string device = 1; // nvme0n1
+    string tps = 2; // 52.86
+    string kbps = 3; //  665.63 + 780.25
+}
+// ------------------------------------------------------
+
+
+// Top talkers по сети:
+// по протоколам: protocol (TCP, UDP, ICMP, etc), bytes, % от sum(bytes) за последние M), сортируем по убыванию процента;
+
+// root@9202f26c9a6e:/# tcpdump -nt -i any -ttt -l -v
+// tcpdump: listening on any, link-type LINUX_SLL (Linux cooked), capture size 262144 bytes
+// 2022-09-19 20:48:44.882104 IP (tos 0x0, ttl 1, id 64698, offset 0, flags [DF], proto UDP (17), length 201)
+//    172.21.0.1.52978 > 239.255.255.250.1900: UDP, length 173
+// 2022-09-19 20:48:45.883817 IP (tos 0x0, ttl 1, id 64868, offset 0, flags [DF], proto UDP (17), length 201)
+//     172.21.0.1.52978 > 239.255.255.250.1900: UDP, length 173
+// 2022-09-19 20:48:46.885409 IP (tos 0x0, ttl 1, id 64960, offset 0, flags [DF], proto UDP (17), length 201)
+//    172.21.0.1.52978 > 239.255.255.250.1900: UDP, length 173
+// 2022-09-19 20:48:47.887062 IP (tos 0x0, ttl 1, id 65140, offset 0, flags [DF], proto UDP (17), length 201)
+//    172.21.0.1.52978 > 239.255.255.250.1900: UDP, length 173
+
+message TopTalkerByProtocol {
+    string protocol = 1; // UDP
+    int64 bytes = 2; // 127
+    string percent = 3; // 32%
+}
+
+// по трафику: source ip:port, destination ip:port, protocol, bytes per second (bps), сортируем по убыванию bps.
+message TopTalkerByTraffic {
+    string source = 1; // 172.21.0.1.52978
+    int64 bytes = 2; // 239.255.255.250.1900
+    string protocol = 3; // udp
+    int64 bytesPerSecond = 4; // 173 ?
+}
+// ------------------------------------------------------
+
+
+// Статистика по сетевым соединениям
+// слушающие TCP & UDP сокеты: command, pid, user, protocol, port;
+
+// root@9202f26c9a6e:/# netstat -lntup
+// Active Internet connections (only servers)
+// Proto Recv-Q Send-Q Local Address           Foreign Address         State       PID/Program name    
+// tcp        0      0 127.0.0.11:40349        0.0.0.0:*               LISTEN      -                   
+// udp        0      0 127.0.0.11:34158        0.0.0.0:*                           -       
+
+// root@9202f26c9a6e:/# ss -ta
+// State                               Recv-Q                                Send-Q                                                                Local Address:Port                                                                Peer Address:Port                               
+// LISTEN                              0                                     4096                                                                     127.0.0.11:40349                                                                    0.0.0.0:*                                  
+// root@9202f26c9a6e:/# ss -ua
+// State                               Recv-Q                                Send-Q                                                                Local Address:Port                                                                Peer Address:Port                               
+// UNCONN                              0                                     0                                                                        127.0.0.11:34158                                                                    0.0.0.0:*                                  
+message ConnectInfo {
+    string command = 1; // -
+    int32 pid = 2; // -
+    string user = 3; // ?
+    string protocol = 4; // TCP
+    string port = 5; // 40349
+}
+
+// количество TCP соединений, находящихся в разных состояниях (ESTAB, FIN_WAIT, SYN_RCV и пр.).
+message ConnectState {
+    string protocol = 1; // tcp
+    string state = 2; // listen
+}
+
+
+// -------------------
+// root@9202f26c9a6e:/# cat /proc/net/dev
+// Inter-|   Receive                                                |  Transmit
+//  face |bytes    packets errs drop fifo frame compressed multicast|bytes    packets errs drop fifo colls carrier compressed
+// lo:     384       4    0    0    0     0          0         0      384       4    0    0    0     0       0          0
+// eth0: 1099136     865    0    0    0     0          0         0    23777     347    0    0    0     0       0          0

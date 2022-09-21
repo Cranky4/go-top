@@ -1,0 +1,8 @@
+version: "3"
+
+services:
+  ubuntu-testing:
+    container_name: ubuntu-testing
+    build: 
+      context: ../
+      dockerfile: ./build/Ubuntu.dockerfile

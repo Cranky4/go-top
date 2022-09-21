@@ -1,0 +1,8 @@
+[top]
+metrics = '' # collect all available metrics if params empty 
+
+[grpc]
+requestLogFile = './logs/grpc-requests.log'
+
+[logg]
+level = 'debug'
