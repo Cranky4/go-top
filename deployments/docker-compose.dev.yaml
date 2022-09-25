@@ -6,3 +6,7 @@ services:
     build: 
       context: ../
       dockerfile: ./build/Ubuntu.dockerfile
+    ports:
+      - "9990:9990"
+    volumes:
+      - ../logs:/opt/app/logs

@@ -8,8 +8,8 @@ import "google/protobuf/timestamp.proto";
 
 // Необходимо каждые **N** секунд выдавать информацию, усредненную за последние **M** секунд.
 message SnapshotRequest {
-    int32 N = 1;
-    int32 M = 2;
+    uint32 N = 1;
+    uint32 M = 2;
 }
 
 service TopService {
@@ -22,9 +22,10 @@ message Snapshot {
     Cpu cpu = 3;
     repeated DiskIO disksIO = 4;
     repeated DiskInfo disksInfo = 5;
-    repeated ConnectInfo connectsInfo = 6;
-    repeated ConnectState connectsStates = 7;
-    repeated TopTalkerByProtocol topTalkersByProtocol = 8;
+    repeated TopTalkerByProtocol topTalkersByProtocol = 6;
+    repeated TopTalkerByTraffic topTalkersByTraffic = 7;
+    repeated ConnectInfo connectsInfo = 8;
+    repeated ConnectState connectsStates = 9;
 }
 // ---------------------------------
 
@@ -119,8 +120,8 @@ message DiskInfo {
 
 message DiskIO {
     string device = 1; // nvme0n1
-    string tps = 2; // 52.86
-    string kbps = 3; //  665.63 + 780.25
+    float tps = 2; // 52.86
+    float kbps = 3; //  665.63 + 780.25
 }
 // ------------------------------------------------------
 
@@ -148,7 +149,7 @@ message TopTalkerByProtocol {
 // по трафику: source ip:port, destination ip:port, protocol, bytes per second (bps), сортируем по убыванию bps.
 message TopTalkerByTraffic {
     string source = 1; // 172.21.0.1.52978
-    int64 bytes = 2; // 239.255.255.250.1900
+    string destination = 2; // 239.255.255.250.1900
     string protocol = 3; // udp
     int64 bytesPerSecond = 4; // 173 ?
 }

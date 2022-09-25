@@ -8,7 +8,7 @@ import (
 	"os"
 
 	pb "github.com/Cranky4/go-top/api/TopService"
-	"github.com/Cranky4/go-top/internal/top"
+	"github.com/Cranky4/go-top/internal/app"
 	"google.golang.org/grpc"
 )
 
@@ -16,12 +16,12 @@ type Server struct {
 	pb.UnimplementedTopServiceServer
 	grpcServer        *grpc.Server
 	logg              Logger
-	app               *top.Top
+	app               *app.App
 	requestLogFile    string
 	requestLogHandler *os.File
 }
 
-func New(app *top.Top, logg Logger, requestLogFile string) *Server {
+func New(app *app.App, logg Logger, requestLogFile string) *Server {
 	return &Server{app: app, logg: logg, requestLogFile: requestLogFile}
 }
 
@@ -46,20 +46,23 @@ func (s *Server) Start(ctx context.Context, addr string) error {
 	}
 	logger := log.New(file, "", log.Ldate|log.Ltime|log.Lshortfile)
 
-	handler, err := NewHandler(s.app, logger)
+	handler, err := NewHandler(ctx, s.app, logger)
 	if err != nil {
 		return err
 	}
 
 	pb.RegisterTopServiceServer(s.grpcServer, handler)
-	go s.grpcServer.Serve(listener)
-	s.logg.Info(fmt.Sprintf("grpc server started and listen %s...", addr))
 
-	<-ctx.Done()
+	s.logg.Info(fmt.Sprintf("grpc server started and listen %s...", addr))
+	err = s.grpcServer.Serve(listener)
+	if err != nil {
+		return err
+	}
+
 	return nil
 }
 
-func (s *Server) Stop(ctx context.Context) {
+func (s *Server) Stop() {
 	s.grpcServer.Stop()
 	s.requestLogHandler.Close()
 	s.logg.Info("grpc server stopped")

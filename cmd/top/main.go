@@ -8,9 +8,9 @@ import (
 	"os/signal"
 	"syscall"
 
+	"github.com/Cranky4/go-top/internal/app"
 	"github.com/Cranky4/go-top/internal/logger"
 	internalgrpc "github.com/Cranky4/go-top/internal/server/grpc"
-	"github.com/Cranky4/go-top/internal/top"
 )
 
 var grpcAddr, configFile string
@@ -35,22 +35,22 @@ func main() {
 	config.Grpc.Addr = grpcAddr
 	logg := logger.New(config.Logg.Level, log.LstdFlags)
 
-	top := top.NewTop(config, *logg)
+	app := app.New(ctx, config, *logg)
 
 	var grpcServer *internalgrpc.Server
 	go func() {
-		grpcServer = internalgrpc.New(top, logg, config.Grpc.RequestLogFile)
+		grpcServer = internalgrpc.New(app, logg, config.Grpc.RequestLogFile)
 		if err := grpcServer.Start(ctx, config.Grpc.Addr); err != nil {
 			logg.Error("failed to start grpc server: " + err.Error())
 			cancel()
 			os.Exit(1)
 		}
 
-		logg.Info("grpc started on " + config.Grpc.Addr)
+		grpcServer.Stop()
 	}()
 	defer cancel()
 
-	logg.Info("top is running...")
+	logg.Info("app is running...")
 
 	<-ctx.Done()
 }

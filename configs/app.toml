@@ -1,5 +1,6 @@
 [top]
-metrics = '' # collect all available metrics if params empty 
+metrics = '' # collect all available metrics if params empty
+topPath = '/usr/bin/top'
 
 [grpc]
 requestLogFile = './logs/grpc-requests.log'

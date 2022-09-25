@@ -1,0 +1,17 @@
+2022/09/25 18:52:50 [INFO] app is running...
+2022/09/25 18:52:50 [INFO] grpc server started and listen :9990...
+2022/09/25 18:53:03 [INFO] top collection started...
+2022/09/25 18:53:03 [DEBUG] [TopRunner] started
+2022/09/25 18:53:26 [DEBUG] [TopRunner] warmed up
+2022/09/25 18:53:31 [DEBUG] [TopRunner] collected
+2022/09/25 18:53:37 [DEBUG] [TopRunner] collected
+2022/09/25 18:53:43 [DEBUG] [TopRunner] collected
+2022/09/25 18:53:49 [DEBUG] [TopRunner] collected
+2022/09/25 18:53:55 [DEBUG] [TopRunner] collected
+2022/09/25 18:54:00 [DEBUG] [TopRunner] collected
+2022/09/25 18:54:06 [DEBUG] [TopRunner] collected
+2022/09/25 18:54:12 [DEBUG] [TopRunner] collected
+2022/09/25 18:54:18 [DEBUG] [TopRunner] collected
+2022/09/25 18:54:23 [DEBUG] [TopRunner] collected
+2022/09/25 18:54:29 [DEBUG] [TopRunner] collected
+2022/09/25 18:54:35 [DEBUG] [TopRunner] collected

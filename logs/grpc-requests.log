@@ -1,1 +1,1 @@
-2022/09/22 00:41:10 handler.go:25: &TopService.SnapshotRequest{state:impl.MessageState{NoUnkeyedLiterals:pragma.NoUnkeyedLiterals{}, DoNotCompare:pragma.DoNotCompare{}, DoNotCopy:pragma.DoNotCopy{}, atomicMessageInfo:(*impl.MessageInfo)(0xc000139000)}, sizeCache:0, unknownFields:[]uint8(nil), N:5, M:10}
+2022/09/25 18:53:03 handler.go:28: Client connected with params: m=20, n=5

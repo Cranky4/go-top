@@ -11,18 +11,18 @@ lint: install-lint-deps
 
 # Top
 build:
-	go build -v -o $(BIN) -ldflags "$(LDFLAGS)" ./cmd/top
+	CGO_ENABLED=0 GOOS=linux go build -v -o $(BIN) -ldflags "$(LDFLAGS)" ./cmd/top
 
 run: build
 	$(BIN) -config ./configs/app.toml
 
 # Dev
-up-dev:
-	docker-compose -f ./deployments/docker-compose.dev.yaml up -d
+up-dev: build
+	docker-compose -f ./deployments/docker-compose.dev.yaml up -d --build
 down-dev:
 	docker-compose -f ./deployments/docker-compose.dev.yaml down --remove-orphans
 dev-run:
-	docker-compose -f ./deployments/docker-compose.dev.yaml exec ubunty-testing 
+	docker-compose -f ./deployments/docker-compose.dev.yaml run ubunty-testing bash
 
 # GRPC
 install-protobuf:
