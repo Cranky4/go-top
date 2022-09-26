@@ -24,11 +24,11 @@ func New(commandPath string, logg Logger) *TopRunner {
 	}
 }
 
-func (t *TopRunner) Run(ctx context.Context, M, N uint32, StartTime time.Time) chan Cpu {
+func (t *TopRunner) Run(ctx context.Context, M, N uint32) chan Cpu {
 	ch := make(chan Cpu)
 	t.logg.Debug("[TopRunner] started")
 
-	go func(startTime time.Time) {
+	go func() {
 		defer close(ch)
 		cpus := make([]Cpu, 0, M)
 
@@ -41,16 +41,12 @@ func (t *TopRunner) Run(ctx context.Context, M, N uint32, StartTime time.Time) c
 		}
 
 		// warming up
-		avgCpu := t.calculateAvg(cpus)
-		avgCpu.StartTime = startTime
-		d, _ := time.ParseDuration(fmt.Sprintf("%ds", M))
-		avgCpu.FinishTime = startTime.Add(d)
-		startTime = avgCpu.FinishTime
+		avg := t.calculateAvg(cpus)
 
 		select {
 		case <-ctx.Done():
 			return
-		case ch <- avgCpu:
+		case ch <- avg:
 			t.logg.Debug("[TopRunner] warmed up")
 			cpus = cpus[N:]
 		}
@@ -65,21 +61,17 @@ func (t *TopRunner) Run(ctx context.Context, M, N uint32, StartTime time.Time) c
 				return
 			}
 
-			avgCpu := t.calculateAvg(cpus)
-			avgCpu.StartTime = startTime
-			d, _ := time.ParseDuration(fmt.Sprintf("%ds", N))
-			avgCpu.FinishTime = startTime.Add(d)
+			avg := t.calculateAvg(cpus)
 
 			select {
 			case <-ctx.Done():
 				return
-			case ch <- avgCpu:
+			case ch <- avg:
 				t.logg.Debug("[TopRunner] collected")
 				cpus = cpus[N:]
-				startTime = avgCpu.FinishTime
 			}
 		}
-	}(StartTime)
+	}()
 
 	return ch
 }

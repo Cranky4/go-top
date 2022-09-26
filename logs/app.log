@@ -1,17 +1,168 @@
-2022/09/25 18:52:50 [INFO] app is running...
-2022/09/25 18:52:50 [INFO] grpc server started and listen :9990...
-2022/09/25 18:53:03 [INFO] top collection started...
-2022/09/25 18:53:03 [DEBUG] [TopRunner] started
-2022/09/25 18:53:26 [DEBUG] [TopRunner] warmed up
-2022/09/25 18:53:31 [DEBUG] [TopRunner] collected
-2022/09/25 18:53:37 [DEBUG] [TopRunner] collected
-2022/09/25 18:53:43 [DEBUG] [TopRunner] collected
-2022/09/25 18:53:49 [DEBUG] [TopRunner] collected
-2022/09/25 18:53:55 [DEBUG] [TopRunner] collected
-2022/09/25 18:54:00 [DEBUG] [TopRunner] collected
-2022/09/25 18:54:06 [DEBUG] [TopRunner] collected
-2022/09/25 18:54:12 [DEBUG] [TopRunner] collected
-2022/09/25 18:54:18 [DEBUG] [TopRunner] collected
-2022/09/25 18:54:23 [DEBUG] [TopRunner] collected
-2022/09/25 18:54:29 [DEBUG] [TopRunner] collected
-2022/09/25 18:54:35 [DEBUG] [TopRunner] collected
+2022/09/26 19:32:49 [INFO] app is running...
+2022/09/26 19:32:49 [INFO] grpc server started and listen :9990...
+2022/09/26 19:32:53 [INFO] [APP] top collection started...
+2022/09/26 19:32:53 [DEBUG] [TopRunner] started
+2022/09/26 19:32:53 [DEBUG] [IostatRunner] started
+2022/09/26 19:32:53 [DEBUG] [DfRunner] started
+2022/09/26 19:32:53 [DEBUG] [APP] waiting cpu
+2022/09/26 19:32:58 [DEBUG] []appdf.DiskInfo{appdf.DiskInfo{Name:"shm", UsedBytes:0, AvailableBytes:65536, UsageBytes:0, UsedInodes:1, AvailableInodes:1964387, UsageInodes:1}, appdf.DiskInfo{Name:"/dev/nvme0n1p10", UsedBytes:105743360, AvailableBytes:171258220, UsageBytes:39, UsedInodes:1448457, AvailableInodes:17163767, UsageInodes:8}, appdf.DiskInfo{Name:"/dev/nvme0n1p8", UsedBytes:48436184, AvailableBytes:11802440, UsageBytes:81, UsedInodes:48436184, AvailableInodes:11802440, UsageInodes:81}, appdf.DiskInfo{Name:"tmpfs", UsedBytes:0, AvailableBytes:7857552, UsageBytes:0, UsedInodes:1, AvailableInodes:1964387, UsageInodes:1}}
+2022/09/26 19:32:59 [DEBUG] [TopRunner] warmed up
+2022/09/26 19:32:59 [DEBUG] [APP] waiting disks io
+2022/09/26 19:32:59 [DEBUG] [APP] waiting disks io
+2022/09/26 19:32:59 [DEBUG] [APP] waiting cpu
+2022/09/26 19:32:59 [DEBUG] [IostatRunner] warmed up
+2022/09/26 19:32:59 [DEBUG] [DfRunner] warmed up
+2022/09/26 19:33:04 [DEBUG] []appdf.DiskInfo{appdf.DiskInfo{Name:"tmpfs", UsedBytes:0, AvailableBytes:7857552, UsageBytes:0, UsedInodes:1, AvailableInodes:1964387, UsageInodes:1}, appdf.DiskInfo{Name:"shm", UsedBytes:0, AvailableBytes:65536, UsageBytes:0, UsedInodes:1, AvailableInodes:1964387, UsageInodes:1}, appdf.DiskInfo{Name:"/dev/nvme0n1p10", UsedBytes:105743360, AvailableBytes:171258220, UsageBytes:39, UsedInodes:1448457, AvailableInodes:17163767, UsageInodes:8}, appdf.DiskInfo{Name:"/dev/nvme0n1p8", UsedBytes:48436184, AvailableBytes:11802440, UsageBytes:81, UsedInodes:48436184, AvailableInodes:11802440, UsageInodes:81}}
+2022/09/26 19:33:04 [DEBUG] [TopRunner] collected
+2022/09/26 19:33:04 [DEBUG] [APP] waiting disks io
+2022/09/26 19:33:04 [DEBUG] [APP] waiting disks io
+2022/09/26 19:33:04 [DEBUG] [APP] waiting cpu
+2022/09/26 19:33:04 [DEBUG] [IostatRunner] collected
+2022/09/26 19:33:04 [DEBUG] [DfRunner] collected
+2022/09/26 19:33:09 [DEBUG] []appdf.DiskInfo{appdf.DiskInfo{Name:"/dev/nvme0n1p8", UsedBytes:48436184, AvailableBytes:11802440, UsageBytes:81, UsedInodes:48436184, AvailableInodes:11802440, UsageInodes:81}, appdf.DiskInfo{Name:"tmpfs", UsedBytes:0, AvailableBytes:7857552, UsageBytes:0, UsedInodes:1, AvailableInodes:1964387, UsageInodes:1}, appdf.DiskInfo{Name:"shm", UsedBytes:0, AvailableBytes:65536, UsageBytes:0, UsedInodes:1, AvailableInodes:1964387, UsageInodes:1}, appdf.DiskInfo{Name:"/dev/nvme0n1p10", UsedBytes:105743360, AvailableBytes:171258220, UsageBytes:39, UsedInodes:1448457, AvailableInodes:17163767, UsageInodes:8}}
+2022/09/26 19:33:10 [DEBUG] [TopRunner] collected
+2022/09/26 19:33:10 [DEBUG] [APP] waiting disks io
+2022/09/26 19:33:10 [DEBUG] [APP] waiting disks io
+2022/09/26 19:33:10 [DEBUG] [IostatRunner] collected
+2022/09/26 19:33:10 [DEBUG] [DfRunner] collected
+2022/09/26 19:33:10 [DEBUG] [APP] waiting cpu
+2022/09/26 19:33:15 [DEBUG] []appdf.DiskInfo{appdf.DiskInfo{Name:"/dev/nvme0n1p8", UsedBytes:48436184, AvailableBytes:11802440, UsageBytes:81, UsedInodes:48436184, AvailableInodes:11802440, UsageInodes:81}, appdf.DiskInfo{Name:"tmpfs", UsedBytes:0, AvailableBytes:7857552, UsageBytes:0, UsedInodes:1, AvailableInodes:1964387, UsageInodes:1}, appdf.DiskInfo{Name:"shm", UsedBytes:0, AvailableBytes:65536, UsageBytes:0, UsedInodes:1, AvailableInodes:1964387, UsageInodes:1}, appdf.DiskInfo{Name:"/dev/nvme0n1p10", UsedBytes:105743348, AvailableBytes:171258231, UsageBytes:39, UsedInodes:1448457, AvailableInodes:17163767, UsageInodes:8}}
+2022/09/26 19:33:16 [DEBUG] [TopRunner] collected
+2022/09/26 19:33:16 [DEBUG] [APP] waiting disks io
+2022/09/26 19:33:16 [DEBUG] [APP] waiting disks io
+2022/09/26 19:33:16 [DEBUG] [APP] waiting cpu
+2022/09/26 19:33:16 [DEBUG] [IostatRunner] collected
+2022/09/26 19:33:16 [DEBUG] [DfRunner] collected
+2022/09/26 19:33:21 [DEBUG] []appdf.DiskInfo{appdf.DiskInfo{Name:"/dev/nvme0n1p10", UsedBytes:105743352, AvailableBytes:171258227, UsageBytes:39, UsedInodes:1448457, AvailableInodes:17163767, UsageInodes:8}, appdf.DiskInfo{Name:"/dev/nvme0n1p8", UsedBytes:48436136, AvailableBytes:11802436, UsageBytes:81, UsedInodes:48436136, AvailableInodes:11802436, UsageInodes:81}, appdf.DiskInfo{Name:"tmpfs", UsedBytes:0, AvailableBytes:7857552, UsageBytes:0, UsedInodes:1, AvailableInodes:1964387, UsageInodes:1}, appdf.DiskInfo{Name:"shm", UsedBytes:0, AvailableBytes:65536, UsageBytes:0, UsedInodes:1, AvailableInodes:1964387, UsageInodes:1}}
+2022/09/26 19:33:22 [DEBUG] [TopRunner] collected
+2022/09/26 19:33:22 [DEBUG] [APP] waiting disks io
+2022/09/26 19:33:22 [DEBUG] [APP] waiting disks io
+2022/09/26 19:33:22 [DEBUG] [APP] waiting cpu
+2022/09/26 19:33:22 [DEBUG] [IostatRunner] collected
+2022/09/26 19:33:22 [DEBUG] [DfRunner] collected
+2022/09/26 19:33:27 [DEBUG] []appdf.DiskInfo{appdf.DiskInfo{Name:"shm", UsedBytes:0, AvailableBytes:65536, UsageBytes:0, UsedInodes:1, AvailableInodes:1964387, UsageInodes:1}, appdf.DiskInfo{Name:"/dev/nvme0n1p10", UsedBytes:105743348, AvailableBytes:171258232, UsageBytes:39, UsedInodes:1448457, AvailableInodes:17163767, UsageInodes:8}, appdf.DiskInfo{Name:"/dev/nvme0n1p8", UsedBytes:48435948, AvailableBytes:11802420, UsageBytes:81, UsedInodes:48435948, AvailableInodes:11802420, UsageInodes:81}, appdf.DiskInfo{Name:"tmpfs", UsedBytes:0, AvailableBytes:7857552, UsageBytes:0, UsedInodes:1, AvailableInodes:1964387, UsageInodes:1}}
+2022/09/26 19:33:27 [DEBUG] [APP] waiting disks io
+2022/09/26 19:33:27 [DEBUG] [APP] waiting disks io
+2022/09/26 19:33:27 [DEBUG] [APP] waiting cpu
+2022/09/26 19:33:27 [DEBUG] [IostatRunner] collected
+2022/09/26 19:33:27 [DEBUG] [TopRunner] collected
+2022/09/26 19:33:27 [DEBUG] [DfRunner] collected
+2022/09/26 19:33:32 [DEBUG] []appdf.DiskInfo{appdf.DiskInfo{Name:"/dev/nvme0n1p8", UsedBytes:48435948, AvailableBytes:11802420, UsageBytes:81, UsedInodes:48435948, AvailableInodes:11802420, UsageInodes:81}, appdf.DiskInfo{Name:"tmpfs", UsedBytes:0, AvailableBytes:7857552, UsageBytes:0, UsedInodes:1, AvailableInodes:1964387, UsageInodes:1}, appdf.DiskInfo{Name:"shm", UsedBytes:0, AvailableBytes:65536, UsageBytes:0, UsedInodes:1, AvailableInodes:1964387, UsageInodes:1}, appdf.DiskInfo{Name:"/dev/nvme0n1p10", UsedBytes:105743348, AvailableBytes:171258232, UsageBytes:39, UsedInodes:1448457, AvailableInodes:17163767, UsageInodes:8}}
+2022/09/26 19:33:33 [DEBUG] [APP] waiting disks io
+2022/09/26 19:33:33 [DEBUG] [APP] waiting disks io
+2022/09/26 19:33:33 [DEBUG] [TopRunner] collected
+2022/09/26 19:33:33 [DEBUG] [IostatRunner] collected
+2022/09/26 19:33:33 [DEBUG] [DfRunner] collected
+2022/09/26 19:33:33 [DEBUG] [APP] waiting cpu
+2022/09/26 19:33:38 [DEBUG] []appdf.DiskInfo{appdf.DiskInfo{Name:"/dev/nvme0n1p8", UsedBytes:48435948, AvailableBytes:11802420, UsageBytes:81, UsedInodes:48435948, AvailableInodes:11802420, UsageInodes:81}, appdf.DiskInfo{Name:"tmpfs", UsedBytes:0, AvailableBytes:7857552, UsageBytes:0, UsedInodes:1, AvailableInodes:1964387, UsageInodes:1}, appdf.DiskInfo{Name:"shm", UsedBytes:0, AvailableBytes:65536, UsageBytes:0, UsedInodes:1, AvailableInodes:1964387, UsageInodes:1}, appdf.DiskInfo{Name:"/dev/nvme0n1p10", UsedBytes:105743349, AvailableBytes:171258230, UsageBytes:39, UsedInodes:1448457, AvailableInodes:17163767, UsageInodes:8}}
+2022/09/26 19:33:39 [DEBUG] [TopRunner] collected
+2022/09/26 19:33:39 [DEBUG] [APP] waiting disks io
+2022/09/26 19:33:39 [DEBUG] [APP] waiting disks io
+2022/09/26 19:33:39 [DEBUG] [APP] waiting cpu
+2022/09/26 19:33:39 [DEBUG] [IostatRunner] collected
+2022/09/26 19:33:39 [DEBUG] [DfRunner] collected
+2022/09/26 19:33:44 [DEBUG] []appdf.DiskInfo{appdf.DiskInfo{Name:"shm", UsedBytes:0, AvailableBytes:65536, UsageBytes:0, UsedInodes:1, AvailableInodes:1964387, UsageInodes:1}, appdf.DiskInfo{Name:"/dev/nvme0n1p10", UsedBytes:105743349, AvailableBytes:171258230, UsageBytes:39, UsedInodes:1448457, AvailableInodes:17163767, UsageInodes:8}, appdf.DiskInfo{Name:"/dev/nvme0n1p8", UsedBytes:48435948, AvailableBytes:11802420, UsageBytes:81, UsedInodes:48435948, AvailableInodes:11802420, UsageInodes:81}, appdf.DiskInfo{Name:"tmpfs", UsedBytes:0, AvailableBytes:7857552, UsageBytes:0, UsedInodes:1, AvailableInodes:1964387, UsageInodes:1}}
+2022/09/26 19:33:45 [DEBUG] [TopRunner] collected
+2022/09/26 19:33:45 [DEBUG] [APP] waiting disks io
+2022/09/26 19:33:45 [DEBUG] [APP] waiting disks io
+2022/09/26 19:33:45 [DEBUG] [APP] waiting cpu
+2022/09/26 19:33:45 [DEBUG] [IostatRunner] collected
+2022/09/26 19:33:45 [DEBUG] [DfRunner] collected
+2022/09/26 19:33:50 [DEBUG] []appdf.DiskInfo{appdf.DiskInfo{Name:"/dev/nvme0n1p8", UsedBytes:48435948, AvailableBytes:11802420, UsageBytes:81, UsedInodes:48435948, AvailableInodes:11802420, UsageInodes:81}, appdf.DiskInfo{Name:"tmpfs", UsedBytes:0, AvailableBytes:7857552, UsageBytes:0, UsedInodes:1, AvailableInodes:1964387, UsageInodes:1}, appdf.DiskInfo{Name:"shm", UsedBytes:0, AvailableBytes:65536, UsageBytes:0, UsedInodes:1, AvailableInodes:1964387, UsageInodes:1}, appdf.DiskInfo{Name:"/dev/nvme0n1p10", UsedBytes:105743344, AvailableBytes:171258236, UsageBytes:39, UsedInodes:1448457, AvailableInodes:17163767, UsageInodes:8}}
+2022/09/26 19:33:51 [DEBUG] [TopRunner] collected
+2022/09/26 19:33:51 [DEBUG] [APP] waiting disks io
+2022/09/26 19:33:51 [DEBUG] [APP] waiting disks io
+2022/09/26 19:33:51 [DEBUG] [APP] waiting cpu
+2022/09/26 19:33:51 [DEBUG] [IostatRunner] collected
+2022/09/26 19:33:51 [DEBUG] [DfRunner] collected
+2022/09/26 19:33:56 [DEBUG] []appdf.DiskInfo{appdf.DiskInfo{Name:"/dev/nvme0n1p8", UsedBytes:48435948, AvailableBytes:11802420, UsageBytes:81, UsedInodes:48435948, AvailableInodes:11802420, UsageInodes:81}, appdf.DiskInfo{Name:"tmpfs", UsedBytes:0, AvailableBytes:7857552, UsageBytes:0, UsedInodes:1, AvailableInodes:1964387, UsageInodes:1}, appdf.DiskInfo{Name:"shm", UsedBytes:0, AvailableBytes:65536, UsageBytes:0, UsedInodes:1, AvailableInodes:1964387, UsageInodes:1}, appdf.DiskInfo{Name:"/dev/nvme0n1p10", UsedBytes:105743344, AvailableBytes:171258236, UsageBytes:39, UsedInodes:1448457, AvailableInodes:17163767, UsageInodes:8}}
+2022/09/26 19:33:56 [DEBUG] [TopRunner] collected
+2022/09/26 19:33:56 [DEBUG] [APP] waiting disks io
+2022/09/26 19:33:56 [DEBUG] [APP] waiting disks io
+2022/09/26 19:33:56 [DEBUG] [APP] waiting cpu
+2022/09/26 19:33:56 [DEBUG] [IostatRunner] collected
+2022/09/26 19:33:56 [DEBUG] [DfRunner] collected
+2022/09/26 19:34:01 [DEBUG] []appdf.DiskInfo{appdf.DiskInfo{Name:"/dev/nvme0n1p8", UsedBytes:48435948, AvailableBytes:11802420, UsageBytes:81, UsedInodes:48435948, AvailableInodes:11802420, UsageInodes:81}, appdf.DiskInfo{Name:"tmpfs", UsedBytes:0, AvailableBytes:7857552, UsageBytes:0, UsedInodes:1, AvailableInodes:1964387, UsageInodes:1}, appdf.DiskInfo{Name:"shm", UsedBytes:0, AvailableBytes:65536, UsageBytes:0, UsedInodes:1, AvailableInodes:1964387, UsageInodes:1}, appdf.DiskInfo{Name:"/dev/nvme0n1p10", UsedBytes:105743353, AvailableBytes:171258226, UsageBytes:39, UsedInodes:1448457, AvailableInodes:17163767, UsageInodes:8}}
+2022/09/26 19:34:02 [DEBUG] [TopRunner] collected
+2022/09/26 19:34:02 [DEBUG] [APP] waiting disks io
+2022/09/26 19:34:02 [DEBUG] [APP] waiting disks io
+2022/09/26 19:34:02 [DEBUG] [APP] waiting cpu
+2022/09/26 19:34:02 [DEBUG] [IostatRunner] collected
+2022/09/26 19:34:02 [DEBUG] [DfRunner] collected
+2022/09/26 19:34:07 [DEBUG] []appdf.DiskInfo{appdf.DiskInfo{Name:"tmpfs", UsedBytes:0, AvailableBytes:7857552, UsageBytes:0, UsedInodes:1, AvailableInodes:1964387, UsageInodes:1}, appdf.DiskInfo{Name:"shm", UsedBytes:0, AvailableBytes:65536, UsageBytes:0, UsedInodes:1, AvailableInodes:1964387, UsageInodes:1}, appdf.DiskInfo{Name:"/dev/nvme0n1p10", UsedBytes:105743360, AvailableBytes:171258220, UsageBytes:39, UsedInodes:1448457, AvailableInodes:17163767, UsageInodes:8}, appdf.DiskInfo{Name:"/dev/nvme0n1p8", UsedBytes:48435948, AvailableBytes:11802420, UsageBytes:81, UsedInodes:48435948, AvailableInodes:11802420, UsageInodes:81}}
+2022/09/26 19:34:08 [DEBUG] [TopRunner] collected
+2022/09/26 19:34:08 [DEBUG] [APP] waiting disks io
+2022/09/26 19:34:08 [DEBUG] [APP] waiting disks io
+2022/09/26 19:34:08 [DEBUG] [APP] waiting cpu
+2022/09/26 19:34:08 [DEBUG] [IostatRunner] collected
+2022/09/26 19:34:08 [DEBUG] [DfRunner] collected
+2022/09/26 19:34:13 [DEBUG] []appdf.DiskInfo{appdf.DiskInfo{Name:"/dev/nvme0n1p10", UsedBytes:105743364, AvailableBytes:171258216, UsageBytes:39, UsedInodes:1448457, AvailableInodes:17163767, UsageInodes:8}, appdf.DiskInfo{Name:"/dev/nvme0n1p8", UsedBytes:48435948, AvailableBytes:11802420, UsageBytes:81, UsedInodes:48435948, AvailableInodes:11802420, UsageInodes:81}, appdf.DiskInfo{Name:"tmpfs", UsedBytes:0, AvailableBytes:7857552, UsageBytes:0, UsedInodes:1, AvailableInodes:1964387, UsageInodes:1}, appdf.DiskInfo{Name:"shm", UsedBytes:0, AvailableBytes:65536, UsageBytes:0, UsedInodes:1, AvailableInodes:1964387, UsageInodes:1}}
+2022/09/26 19:34:14 [DEBUG] [TopRunner] collected
+2022/09/26 19:34:14 [DEBUG] [APP] waiting disks io
+2022/09/26 19:34:14 [DEBUG] [APP] waiting disks io
+2022/09/26 19:34:14 [DEBUG] [APP] waiting cpu
+2022/09/26 19:34:14 [DEBUG] [IostatRunner] collected
+2022/09/26 19:34:14 [DEBUG] [DfRunner] collected
+2022/09/26 19:34:19 [DEBUG] []appdf.DiskInfo{appdf.DiskInfo{Name:"/dev/nvme0n1p10", UsedBytes:105743364, AvailableBytes:171258216, UsageBytes:39, UsedInodes:1448457, AvailableInodes:17163767, UsageInodes:8}, appdf.DiskInfo{Name:"/dev/nvme0n1p8", UsedBytes:48435948, AvailableBytes:11802420, UsageBytes:81, UsedInodes:48435948, AvailableInodes:11802420, UsageInodes:81}, appdf.DiskInfo{Name:"tmpfs", UsedBytes:0, AvailableBytes:7857552, UsageBytes:0, UsedInodes:1, AvailableInodes:1964387, UsageInodes:1}, appdf.DiskInfo{Name:"shm", UsedBytes:0, AvailableBytes:65536, UsageBytes:0, UsedInodes:1, AvailableInodes:1964387, UsageInodes:1}}
+2022/09/26 19:34:19 [DEBUG] [TopRunner] collected
+2022/09/26 19:34:19 [DEBUG] [APP] waiting disks io
+2022/09/26 19:34:19 [DEBUG] [APP] waiting disks io
+2022/09/26 19:34:19 [DEBUG] [APP] waiting cpu
+2022/09/26 19:34:19 [DEBUG] [IostatRunner] collected
+2022/09/26 19:34:19 [DEBUG] [DfRunner] collected
+2022/09/26 19:34:24 [DEBUG] []appdf.DiskInfo{appdf.DiskInfo{Name:"/dev/nvme0n1p10", UsedBytes:105743364, AvailableBytes:171258216, UsageBytes:39, UsedInodes:1448457, AvailableInodes:17163767, UsageInodes:8}, appdf.DiskInfo{Name:"/dev/nvme0n1p8", UsedBytes:48435948, AvailableBytes:11802420, UsageBytes:81, UsedInodes:48435948, AvailableInodes:11802420, UsageInodes:81}, appdf.DiskInfo{Name:"tmpfs", UsedBytes:0, AvailableBytes:7857552, UsageBytes:0, UsedInodes:1, AvailableInodes:1964387, UsageInodes:1}, appdf.DiskInfo{Name:"shm", UsedBytes:0, AvailableBytes:65536, UsageBytes:0, UsedInodes:1, AvailableInodes:1964387, UsageInodes:1}}
+2022/09/26 19:34:25 [DEBUG] [TopRunner] collected
+2022/09/26 19:34:25 [DEBUG] [APP] waiting disks io
+2022/09/26 19:34:25 [DEBUG] [APP] waiting disks io
+2022/09/26 19:34:25 [DEBUG] [APP] waiting cpu
+2022/09/26 19:34:25 [DEBUG] [IostatRunner] collected
+2022/09/26 19:34:25 [DEBUG] [DfRunner] collected
+2022/09/26 19:34:30 [DEBUG] []appdf.DiskInfo{appdf.DiskInfo{Name:"/dev/nvme0n1p8", UsedBytes:48435948, AvailableBytes:11802420, UsageBytes:81, UsedInodes:48435948, AvailableInodes:11802420, UsageInodes:81}, appdf.DiskInfo{Name:"tmpfs", UsedBytes:0, AvailableBytes:7857552, UsageBytes:0, UsedInodes:1, AvailableInodes:1964387, UsageInodes:1}, appdf.DiskInfo{Name:"shm", UsedBytes:0, AvailableBytes:65536, UsageBytes:0, UsedInodes:1, AvailableInodes:1964387, UsageInodes:1}, appdf.DiskInfo{Name:"/dev/nvme0n1p10", UsedBytes:105743356, AvailableBytes:171258223, UsageBytes:39, UsedInodes:1448457, AvailableInodes:17163767, UsageInodes:8}}
+2022/09/26 19:34:31 [DEBUG] [TopRunner] collected
+2022/09/26 19:34:31 [DEBUG] [APP] waiting disks io
+2022/09/26 19:34:31 [DEBUG] [APP] waiting disks io
+2022/09/26 19:34:31 [DEBUG] [IostatRunner] collected
+2022/09/26 19:34:31 [DEBUG] [DfRunner] collected
+2022/09/26 19:34:31 [DEBUG] [APP] waiting cpu
+2022/09/26 19:34:36 [DEBUG] []appdf.DiskInfo{appdf.DiskInfo{Name:"shm", UsedBytes:0, AvailableBytes:65536, UsageBytes:0, UsedInodes:1, AvailableInodes:1964387, UsageInodes:1}, appdf.DiskInfo{Name:"/dev/nvme0n1p10", UsedBytes:105743352, AvailableBytes:171258228, UsageBytes:39, UsedInodes:1448457, AvailableInodes:17163767, UsageInodes:8}, appdf.DiskInfo{Name:"/dev/nvme0n1p8", UsedBytes:48435948, AvailableBytes:11802420, UsageBytes:81, UsedInodes:48435948, AvailableInodes:11802420, UsageInodes:81}, appdf.DiskInfo{Name:"tmpfs", UsedBytes:0, AvailableBytes:7857552, UsageBytes:0, UsedInodes:1, AvailableInodes:1964387, UsageInodes:1}}
+2022/09/26 19:34:37 [DEBUG] [TopRunner] collected
+2022/09/26 19:34:37 [DEBUG] [APP] waiting disks io
+2022/09/26 19:34:37 [DEBUG] [APP] waiting disks io
+2022/09/26 19:34:37 [DEBUG] [APP] waiting cpu
+2022/09/26 19:34:37 [DEBUG] [IostatRunner] collected
+2022/09/26 19:34:37 [DEBUG] [DfRunner] collected
+2022/09/26 19:34:42 [DEBUG] []appdf.DiskInfo{appdf.DiskInfo{Name:"tmpfs", UsedBytes:0, AvailableBytes:7857552, UsageBytes:0, UsedInodes:1, AvailableInodes:1964387, UsageInodes:1}, appdf.DiskInfo{Name:"shm", UsedBytes:0, AvailableBytes:65536, UsageBytes:0, UsedInodes:1, AvailableInodes:1964387, UsageInodes:1}, appdf.DiskInfo{Name:"/dev/nvme0n1p10", UsedBytes:105743356, AvailableBytes:171258224, UsageBytes:39, UsedInodes:1448457, AvailableInodes:17163767, UsageInodes:8}, appdf.DiskInfo{Name:"/dev/nvme0n1p8", UsedBytes:48435948, AvailableBytes:11802420, UsageBytes:81, UsedInodes:48435948, AvailableInodes:11802420, UsageInodes:81}}
+2022/09/26 19:34:43 [DEBUG] [TopRunner] collected
+2022/09/26 19:34:43 [DEBUG] [APP] waiting disks io
+2022/09/26 19:34:43 [DEBUG] [APP] waiting disks io
+2022/09/26 19:34:43 [DEBUG] [APP] waiting cpu
+2022/09/26 19:34:43 [DEBUG] [IostatRunner] collected
+2022/09/26 19:34:43 [DEBUG] [DfRunner] collected
+2022/09/26 19:34:48 [DEBUG] []appdf.DiskInfo{appdf.DiskInfo{Name:"/dev/nvme0n1p8", UsedBytes:48435948, AvailableBytes:11802420, UsageBytes:81, UsedInodes:48435948, AvailableInodes:11802420, UsageInodes:81}, appdf.DiskInfo{Name:"tmpfs", UsedBytes:0, AvailableBytes:7857552, UsageBytes:0, UsedInodes:1, AvailableInodes:1964387, UsageInodes:1}, appdf.DiskInfo{Name:"shm", UsedBytes:0, AvailableBytes:65536, UsageBytes:0, UsedInodes:1, AvailableInodes:1964387, UsageInodes:1}, appdf.DiskInfo{Name:"/dev/nvme0n1p10", UsedBytes:105743356, AvailableBytes:171258224, UsageBytes:39, UsedInodes:1448457, AvailableInodes:17163767, UsageInodes:8}}
+2022/09/26 19:34:48 [DEBUG] [TopRunner] collected
+2022/09/26 19:34:48 [DEBUG] [APP] waiting disks io
+2022/09/26 19:34:48 [DEBUG] [APP] waiting disks io
+2022/09/26 19:34:48 [DEBUG] [APP] waiting cpu
+2022/09/26 19:34:48 [DEBUG] [IostatRunner] collected
+2022/09/26 19:34:48 [DEBUG] [DfRunner] collected
+2022/09/26 19:34:53 [DEBUG] []appdf.DiskInfo{appdf.DiskInfo{Name:"/dev/nvme0n1p10", UsedBytes:105743356, AvailableBytes:171258224, UsageBytes:39, UsedInodes:1448457, AvailableInodes:17163767, UsageInodes:8}, appdf.DiskInfo{Name:"/dev/nvme0n1p8", UsedBytes:48435948, AvailableBytes:11802420, UsageBytes:81, UsedInodes:48435948, AvailableInodes:11802420, UsageInodes:81}, appdf.DiskInfo{Name:"tmpfs", UsedBytes:0, AvailableBytes:7857552, UsageBytes:0, UsedInodes:1, AvailableInodes:1964387, UsageInodes:1}, appdf.DiskInfo{Name:"shm", UsedBytes:0, AvailableBytes:65536, UsageBytes:0, UsedInodes:1, AvailableInodes:1964387, UsageInodes:1}}
+2022/09/26 19:34:54 [DEBUG] [TopRunner] collected
+2022/09/26 19:34:54 [DEBUG] [APP] waiting disks io
+2022/09/26 19:34:54 [DEBUG] [APP] waiting disks io
+2022/09/26 19:34:54 [DEBUG] [APP] waiting cpu
+2022/09/26 19:34:54 [DEBUG] [IostatRunner] collected
+2022/09/26 19:34:54 [DEBUG] [DfRunner] collected
+2022/09/26 19:34:59 [DEBUG] []appdf.DiskInfo{appdf.DiskInfo{Name:"tmpfs", UsedBytes:0, AvailableBytes:7857552, UsageBytes:0, UsedInodes:1, AvailableInodes:1964387, UsageInodes:1}, appdf.DiskInfo{Name:"shm", UsedBytes:0, AvailableBytes:65536, UsageBytes:0, UsedInodes:1, AvailableInodes:1964387, UsageInodes:1}, appdf.DiskInfo{Name:"/dev/nvme0n1p10", UsedBytes:105743362, AvailableBytes:171258217, UsageBytes:39, UsedInodes:1448457, AvailableInodes:17163767, UsageInodes:8}, appdf.DiskInfo{Name:"/dev/nvme0n1p8", UsedBytes:48435948, AvailableBytes:11802420, UsageBytes:81, UsedInodes:48435948, AvailableInodes:11802420, UsageInodes:81}}
+2022/09/26 19:35:00 [DEBUG] [TopRunner] collected
+2022/09/26 19:35:00 [DEBUG] [APP] waiting disks io
+2022/09/26 19:35:00 [DEBUG] [APP] waiting disks io
+2022/09/26 19:35:00 [DEBUG] [APP] waiting cpu
+2022/09/26 19:35:00 [DEBUG] [IostatRunner] collected
+2022/09/26 19:35:00 [DEBUG] [DfRunner] collected
+2022/09/26 19:35:05 [DEBUG] []appdf.DiskInfo{appdf.DiskInfo{Name:"tmpfs", UsedBytes:0, AvailableBytes:7857552, UsageBytes:0, UsedInodes:1, AvailableInodes:1964387, UsageInodes:1}, appdf.DiskInfo{Name:"shm", UsedBytes:0, AvailableBytes:65536, UsageBytes:0, UsedInodes:1, AvailableInodes:1964387, UsageInodes:1}, appdf.DiskInfo{Name:"/dev/nvme0n1p10", UsedBytes:105743376, AvailableBytes:171258204, UsageBytes:39, UsedInodes:1448457, AvailableInodes:17163767, UsageInodes:8}, appdf.DiskInfo{Name:"/dev/nvme0n1p8", UsedBytes:48435948, AvailableBytes:11802420, UsageBytes:81, UsedInodes:48435948, AvailableInodes:11802420, UsageInodes:81}}
+2022/09/26 19:35:06 [DEBUG] [TopRunner] collected
+2022/09/26 19:35:06 [DEBUG] [APP] waiting disks io
+2022/09/26 19:35:06 [DEBUG] [APP] waiting disks io
+2022/09/26 19:35:06 [DEBUG] [APP] waiting cpu
+2022/09/26 19:35:06 [DEBUG] [IostatRunner] collected
+2022/09/26 19:35:06 [DEBUG] [DfRunner] collected

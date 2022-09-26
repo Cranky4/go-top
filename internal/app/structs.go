@@ -3,17 +3,19 @@ package app
 import (
 	"time"
 
+	appdf "github.com/Cranky4/go-top/internal/app/df"
+	appiostat "github.com/Cranky4/go-top/internal/app/iostat"
 	apptop "github.com/Cranky4/go-top/internal/app/top"
 )
 
 type Config struct {
-	Top  TopConf
+	App  AppConf
 	Logg LoggerConf
 	Grpc GrpcConf
 }
 
-type TopConf struct {
-	Metrics, TopPath string
+type AppConf struct {
+	Metrics, TopPath, IostatPath, DfPath string
 }
 
 type LoggerConf struct {
@@ -27,26 +29,12 @@ type GrpcConf struct {
 type Snapshot struct {
 	StartTime, FinishTime time.Time
 	Cpu                   apptop.Cpu
-	DisksIO               []DiskIO
-	DisksInfo             []DiskInfo
+	DisksIO               []appiostat.DiskIO
+	DisksInfo             []appdf.DiskInfo
 	TopTalkersByProtocol  []TopTalkerByProtocol
 	TopTalkersByTraffic   []TopTalkerByTraffic
 	ConnectsInfo          []ConnectInfo
 	ConnectsStates        []ConnectState
-}
-
-type DiskIO struct {
-	Device, Tps, Kbps string // nvme0n1,  52.86, 665.63 + 780.25
-}
-
-type DiskInfo struct {
-	Name            string // /dev/nvme0n1p3     df -k
-	UsedBytes       int64  // 39131452
-	AvailableBytes  int64  // 64169664
-	UsageBytes      string // 38%
-	UsedInodes      int64  // 272911         df -i
-	AvailableInodes int64  // 64224433
-	UsageInodes     string // 1%
 }
 
 type ConnectInfo struct {

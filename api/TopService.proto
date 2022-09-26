@@ -102,10 +102,10 @@ message DiskInfo {
     string name = 1; // /dev/nvme0n1p3     df -k
     int64 usedBytes = 2; // 39131452
     int64 availableBytes = 3; // 64169664
-    string usageBytes = 4; // 38%
+    int32 usageBytes = 4; // 38%
     int64 usedInodes = 5; // 272911         df -i
     int64 availableInodes = 6; // 64224433
-    string  usageInodes = 7; // 1% 
+    int32  usageInodes = 7; // 1 % 
 }
 // -----------------------------------------------------
 

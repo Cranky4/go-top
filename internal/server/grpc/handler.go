@@ -2,8 +2,8 @@ package internalgrpc
 
 import (
 	"context"
+	"fmt"
 	"log"
-	"time"
 
 	"github.com/Cranky4/go-top/api/TopService"
 	pb "github.com/Cranky4/go-top/api/TopService"
@@ -34,7 +34,28 @@ func (h *handler) StreamSnapshots(r *TopService.SnapshotRequest, srv TopService.
 			h.logg.Printf("Client disconnected")
 			return nil
 		case s := <-ch:
-			time.Sleep(3 * time.Second)
+			disksIO := make([]*pb.DiskIO, 0, len(s.DisksIO))
+			for _, d := range s.DisksIO {
+				disksIO = append(disksIO, &pb.DiskIO{
+					Device: d.Device,
+					Tps:    d.Tps,
+					Kbps:   d.Kbps,
+				})
+			}
+
+			disksInfo := make([]*pb.DiskInfo, 0, len(s.DisksInfo))
+			for _, d := range s.DisksInfo {
+				disksInfo = append(disksInfo, &pb.DiskInfo{
+					Name:            d.Name,
+					UsedBytes:       int64(d.UsedBytes),
+					AvailableBytes:  int64(d.AvailableBytes),
+					UsageBytes:      fmt.Sprintf("%d%%", d.UsageBytes),
+					UsedInodes:      int64(d.UsedInodes),
+					AvailableInodes: int64(d.AvailableInodes),
+					UsageInodes:     fmt.Sprintf("%d%%", d.UsageInodes),
+				})
+			}
+
 			snapshot := pb.Snapshot{
 				StartTime: &timestamppb.Timestamp{
 					Seconds: s.StartTime.Unix(),
@@ -56,18 +77,8 @@ func (h *handler) StreamSnapshots(r *TopService.SnapshotRequest, srv TopService.
 						Idle:   s.Cpu.State.Idle,
 					},
 				},
-				// 	DisksIO: []*pb.DiskIO{
-				// 		{
-				// 			Device: "nvme0n1",
-				// 			Tps:    52.84,
-				// 			Kbps:   1423.33,
-				// 		},
-				// 		{
-				// 			Device: "nvme0n2",
-				// 			Tps:    32.84,
-				// 			Kbps:   423.33,
-				// 		},
-				// 	},
+				DisksIO:   disksIO,
+				DisksInfo: disksInfo,
 				// 	DisksInfo: []*pb.DiskInfo{
 				// 		{
 				// 			Name:            "/dev/nwme0n1",

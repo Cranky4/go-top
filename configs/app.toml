@@ -1,6 +1,8 @@
-[top]
+[app]
 metrics = '' # collect all available metrics if params empty
 topPath = '/usr/bin/top'
+iostatPath = '/usr/bin/iostat'
+dfPath = '/bin/df'
 
 [grpc]
 requestLogFile = './logs/grpc-requests.log'
