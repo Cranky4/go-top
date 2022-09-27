@@ -1,11 +1,8 @@
 package apptop
 
-import "time"
-
 type Cpu struct {
-	StartTime, FinishTime time.Time
-	Avg                   CpuAvg
-	State                 CpuState
+	Avg   CpuAvg
+	State CpuState
 }
 
 type CpuAvg struct {

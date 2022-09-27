@@ -4,8 +4,6 @@ package topService;
 
 option go_package="./TopService";
 
-import "google/protobuf/timestamp.proto";
-
 // Необходимо каждые **N** секунд выдавать информацию, усредненную за последние **M** секунд.
 message SnapshotRequest {
     uint32 N = 1;
@@ -17,15 +15,13 @@ service TopService {
 }
 
 message Snapshot {
-    google.protobuf.Timestamp startTime = 1;
-    google.protobuf.Timestamp finishTime = 2;
-    Cpu cpu = 3;
-    repeated DiskIO disksIO = 4;
-    repeated DiskInfo disksInfo = 5;
-    repeated TopTalkerByProtocol topTalkersByProtocol = 6;
-    repeated TopTalkerByTraffic topTalkersByTraffic = 7;
-    repeated ConnectInfo connectsInfo = 8;
-    repeated ConnectState connectsStates = 9;
+    Cpu cpu = 1;
+    repeated DiskIO disksIO = 2;
+    repeated DiskInfo disksInfo = 3;
+    repeated TopTalkerByProtocol topTalkersByProtocol = 4;
+    repeated TopTalkerByTraffic topTalkersByTraffic = 5;
+    repeated ConnectInfo connectsInfo = 6;
+    repeated ConnectState connectsStates = 7;
 }
 // ---------------------------------
 
@@ -100,12 +96,12 @@ message CpuAvg {
 
 message DiskInfo {
     string name = 1; // /dev/nvme0n1p3     df -k
-    int64 usedBytes = 2; // 39131452
-    int64 availableBytes = 3; // 64169664
+    int32 usedBytes = 2; // 39131452
+    int32 availableBytes = 3; // 64169664
     int32 usageBytes = 4; // 38%
-    int64 usedInodes = 5; // 272911         df -i
-    int64 availableInodes = 6; // 64224433
-    int32  usageInodes = 7; // 1 % 
+    int32 usedInodes = 5; // 272911         df -i
+    int32 availableInodes = 6; // 64224433
+    int32 usageInodes = 7; // 1 % 
 }
 // -----------------------------------------------------
 
@@ -130,19 +126,19 @@ message DiskIO {
 // по протоколам: protocol (TCP, UDP, ICMP, etc), bytes, % от sum(bytes) за последние M), сортируем по убыванию процента;
 
 // root@9202f26c9a6e:/# tcpdump -nt -i any -ttt -l -v
-// tcpdump: listening on any, link-type LINUX_SLL (Linux cooked), capture size 262144 bytes
-// 2022-09-19 20:48:44.882104 IP (tos 0x0, ttl 1, id 64698, offset 0, flags [DF], proto UDP (17), length 201)
-//    172.21.0.1.52978 > 239.255.255.250.1900: UDP, length 173
-// 2022-09-19 20:48:45.883817 IP (tos 0x0, ttl 1, id 64868, offset 0, flags [DF], proto UDP (17), length 201)
-//     172.21.0.1.52978 > 239.255.255.250.1900: UDP, length 173
-// 2022-09-19 20:48:46.885409 IP (tos 0x0, ttl 1, id 64960, offset 0, flags [DF], proto UDP (17), length 201)
-//    172.21.0.1.52978 > 239.255.255.250.1900: UDP, length 173
-// 2022-09-19 20:48:47.887062 IP (tos 0x0, ttl 1, id 65140, offset 0, flags [DF], proto UDP (17), length 201)
-//    172.21.0.1.52978 > 239.255.255.250.1900: UDP, length 173
+// 16:17:46.354621 IP 192.168.240.2.9990 > 192.168.240.1.46346: tcp 245
+// 16:17:46.354621 IP 192.168.240.1.46346 > 192.168.240.2.9990: tcp 0
+// 16:17:46.354621 IP 192.168.240.1.36236 > 239.255.255.250.1900: UDP, length 173
+// 16:17:46.354621 IP 192.168.240.1.36236 > 239.255.255.250.1900: UDP, length 173
+// 16:17:46.354621 IP 192.168.240.1.36236 > 239.255.255.250.1900: UDP, length 173
+// 16:17:46.354621 IP 192.168.240.1.36236 > 239.255.255.250.1900: UDP, length 173
+// 16:17:46.354621 IP 192.168.240.2.9990 > 192.168.240.1.46346: tcp 245
+// 16:17:46.354621 IP 192.168.240.1.46346 > 192.168.240.2.9990: tcp 0
+// 16:17:46.354621 IP 10.79.97.62 > 216.58.200.14: ICMP echo request, id 33817, seq 1707, length 64
 
 message TopTalkerByProtocol {
     string protocol = 1; // UDP
-    int64 bytes = 2; // 127
+    int32 bytes = 2; // 127
     string percent = 3; // 32%
 }
 
@@ -164,22 +160,21 @@ message TopTalkerByTraffic {
 // Proto Recv-Q Send-Q Local Address           Foreign Address         State       PID/Program name    
 // tcp        0      0 127.0.0.11:40349        0.0.0.0:*               LISTEN      -                   
 // udp        0      0 127.0.0.11:34158        0.0.0.0:*                           -       
+message ConnectInfo {
+    string command = 1; // -
+    int32 pid = 2; // -
+    string user = 3; // ?
+    string protocol = 4; // TCP
+    int32 port = 5; // 40349
+}
 
+// количество TCP соединений, находящихся в разных состояниях (ESTAB, FIN_WAIT, SYN_RCV и пр.).
 // root@9202f26c9a6e:/# ss -ta
 // State                               Recv-Q                                Send-Q                                                                Local Address:Port                                                                Peer Address:Port                               
 // LISTEN                              0                                     4096                                                                     127.0.0.11:40349                                                                    0.0.0.0:*                                  
 // root@9202f26c9a6e:/# ss -ua
 // State                               Recv-Q                                Send-Q                                                                Local Address:Port                                                                Peer Address:Port                               
 // UNCONN                              0                                     0                                                                        127.0.0.11:34158                                                                    0.0.0.0:*                                  
-message ConnectInfo {
-    string command = 1; // -
-    int32 pid = 2; // -
-    string user = 3; // ?
-    string protocol = 4; // TCP
-    string port = 5; // 40349
-}
-
-// количество TCP соединений, находящихся в разных состояниях (ESTAB, FIN_WAIT, SYN_RCV и пр.).
 message ConnectState {
     string protocol = 1; // tcp
     string state = 2; // listen

@@ -221,6 +221,5 @@ func (t *IostatRunner) calculateAvg(disks [][]DiskInfo) []DiskInfo {
 		})
 	}
 
-	t.logg.Debug(fmt.Sprintf("%#v", result))
 	return result
 }

@@ -56,7 +56,7 @@ func (l *Logger) SetOutput(out io.Writer) {
 
 func (l Logger) Debug(msg string) {
 	if l.level <= LogLevel(Debug) {
-		l.logg.Printf("%s %s", l.debugPrefix, msg)
+		l.logg.Printf("%s %s\n", l.debugPrefix, msg)
 	}
 }
 

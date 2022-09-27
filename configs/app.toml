@@ -1,8 +1,15 @@
 [app]
-metrics = '' # collect all available metrics if params empty
 topPath = '/usr/bin/top'
 iostatPath = '/usr/bin/iostat'
 dfPath = '/bin/df'
+tcpDumpPath = '/usr/sbin/tcpdump'
+netStatPath = '/bin/netstat'
+
+[metrics]
+cpu = true
+disks = true
+network = true
+connections = true
 
 [grpc]
 requestLogFile = './logs/grpc-requests.log'

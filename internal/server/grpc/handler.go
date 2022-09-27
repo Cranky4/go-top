@@ -2,13 +2,11 @@ package internalgrpc
 
 import (
 	"context"
-	"fmt"
 	"log"
 
 	"github.com/Cranky4/go-top/api/TopService"
 	pb "github.com/Cranky4/go-top/api/TopService"
 	"github.com/Cranky4/go-top/internal/app"
-	"google.golang.org/protobuf/types/known/timestamppb"
 )
 
 type Handler = pb.TopServiceServer
@@ -47,24 +45,34 @@ func (h *handler) StreamSnapshots(r *TopService.SnapshotRequest, srv TopService.
 			for _, d := range s.DisksInfo {
 				disksInfo = append(disksInfo, &pb.DiskInfo{
 					Name:            d.Name,
-					UsedBytes:       int64(d.UsedBytes),
-					AvailableBytes:  int64(d.AvailableBytes),
-					UsageBytes:      fmt.Sprintf("%d%%", d.UsageBytes),
-					UsedInodes:      int64(d.UsedInodes),
-					AvailableInodes: int64(d.AvailableInodes),
-					UsageInodes:     fmt.Sprintf("%d%%", d.UsageInodes),
+					UsedBytes:       int32(d.UsedBytes),
+					AvailableBytes:  int32(d.AvailableBytes),
+					UsageBytes:      int32(d.UsageBytes),
+					UsedInodes:      int32(d.UsedInodes),
+					AvailableInodes: int32(d.AvailableInodes),
+					UsageInodes:     int32(d.UsageInodes),
+				})
+			}
+
+			connectsInfo := make([]*pb.ConnectInfo, 0, len(s.ConnectsInfo))
+			for _, v := range s.ConnectsInfo {
+				connectsInfo = append(connectsInfo, &pb.ConnectInfo{
+					Command:  v.Command,
+					Pid:      int32(v.Pid),
+					Protocol: v.Protocol,
+					Port:     int32(v.Port),
+				})
+			}
+
+			connectsStates := make([]*pb.ConnectState, 0, len(s.ConnectsStates))
+			for _, v := range s.ConnectsStates {
+				connectsStates = append(connectsStates, &pb.ConnectState{
+					Protocol: v.Protocol,
+					State:    v.State,
 				})
 			}
 
 			snapshot := pb.Snapshot{
-				StartTime: &timestamppb.Timestamp{
-					Seconds: s.StartTime.Unix(),
-					Nanos:   int32(s.StartTime.Nanosecond()),
-				},
-				FinishTime: &timestamppb.Timestamp{
-					Seconds: s.FinishTime.Unix(),
-					Nanos:   int32(s.FinishTime.Nanosecond()),
-				},
 				Cpu: &pb.Cpu{
 					Avg: &pb.CpuAvg{
 						Min:     s.Cpu.Avg.Min,
@@ -77,28 +85,11 @@ func (h *handler) StreamSnapshots(r *TopService.SnapshotRequest, srv TopService.
 						Idle:   s.Cpu.State.Idle,
 					},
 				},
-				DisksIO:   disksIO,
-				DisksInfo: disksInfo,
-				// 	DisksInfo: []*pb.DiskInfo{
-				// 		{
-				// 			Name:            "/dev/nwme0n1",
-				// 			UsedBytes:       2414232,
-				// 			AvailableBytes:  42423,
-				// 			UsageBytes:      "38%",
-				// 			UsedInodes:      4123,
-				// 			AvailableInodes: 232,
-				// 			UsageInodes:     "21%",
-				// 		},
-				// 		{
-				// 			Name:            "/dev/nwme0n2",
-				// 			UsedBytes:       2414232,
-				// 			AvailableBytes:  42423,
-				// 			UsageBytes:      "38%",
-				// 			UsedInodes:      4123,
-				// 			AvailableInodes: 232,
-				// 			UsageInodes:     "21%",
-				// 		},
-				// 	},
+				DisksIO:        disksIO,
+				DisksInfo:      disksInfo,
+				ConnectsInfo:   connectsInfo,
+				ConnectsStates: connectsStates,
+
 				// 	TopTalkersByProtocol: []*pb.TopTalkerByProtocol{
 				// 		{
 				// 			Protocol: "UDP",
@@ -123,32 +114,6 @@ func (h *handler) StreamSnapshots(r *TopService.SnapshotRequest, srv TopService.
 				// 			Destination:    "127.0.0.2",
 				// 			Protocol:       "TCP",
 				// 			BytesPerSecond: 23,
-				// 		},
-				// 	},
-				// 	ConnectsInfo: []*pb.ConnectInfo{
-				// 		{
-				// 			Command:  "ping",
-				// 			Pid:      2312,
-				// 			User:     "root",
-				// 			Protocol: "UDP",
-				// 			Port:     ":90",
-				// 		},
-				// 		{
-				// 			Command:  "smtth",
-				// 			Pid:      2344,
-				// 			User:     "root",
-				// 			Protocol: "TCP",
-				// 			Port:     ":9230",
-				// 		},
-				// 	},
-				// 	ConnectsStates: []*pb.ConnectState{
-				// 		{
-				// 			Protocol: "UDP",
-				// 			State:    "READY",
-				// 		},
-				// 		{
-				// 			Protocol: "TCP",
-				// 			State:    "BAC",
 				// 		},
 				// 	},
 			}
