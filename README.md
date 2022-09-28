@@ -50,8 +50,8 @@ $ iostat -d -k
 $ cat /proc/net/dev
 $ sudo netstat -lntup
 $ ss -ta
-$ tcpdump -ntq -i any -P inout -l
-$ tcpdump -nt -i any -P inout -ttt -l
+$ tcpdump -ntq -i any -Q inout -l
+$ tcpdump -nt -i any -Q inout -ttt -l
 ```
 
 Статистика представляет собой объекты, описанные в формате Protobuf.
