@@ -9,6 +9,9 @@ install-lint-deps:
 lint: install-lint-deps
 	golangci-lint run ./...
 
+test:
+	go test ./...
+
 # Top
 build:
 	CGO_ENABLED=0 GOOS=linux go build -v -o $(BIN) -ldflags "$(LDFLAGS)" ./cmd/top

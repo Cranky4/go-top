@@ -2,8 +2,9 @@
 topPath = '/usr/bin/top'
 iostatPath = '/usr/bin/iostat'
 dfPath = '/bin/df'
-tcpDumpPath = '/usr/sbin/tcpdump'
 netStatPath = '/bin/netstat'
+tcpDumpPath = '/usr/sbin/tcpdump'
+timeoutPath = '/usr/bin/timeout'
 
 [metrics]
 cpu = true

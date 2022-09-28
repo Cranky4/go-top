@@ -22,6 +22,10 @@ func (t *TopParser) Parse(in string) (Cpu, error) {
 	// avg
 	avgParts := t.avgLoadReg.FindStringSubmatch(rows[0])
 
+	if len(avgParts) == 0 {
+		return Cpu{}, &ErrCannotParseInput{Input: rows[0]}
+	}
+
 	min, err := strconv.ParseFloat(avgParts[1], 32)
 	if err != nil {
 		return Cpu{}, err
@@ -39,6 +43,10 @@ func (t *TopParser) Parse(in string) (Cpu, error) {
 
 	// states
 	statesParts := t.statesReg.FindStringSubmatch(rows[2])
+
+	if len(statesParts) == 0 {
+		return Cpu{}, &ErrCannotParseInput{Input: rows[2]}
+	}
 
 	us, err := strconv.ParseFloat(statesParts[1], 32)
 	if err != nil {

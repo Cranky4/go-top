@@ -24,7 +24,7 @@ func New(commandPath string, logg Logger) *TopRunner {
 	}
 }
 
-func (t *TopRunner) Run(ctx context.Context, M, N uint32) chan Cpu {
+func (t *TopRunner) Run(ctx context.Context, M, N int) chan Cpu {
 	ch := make(chan Cpu)
 	t.logg.Debug("[TopRunner] started")
 
@@ -76,10 +76,8 @@ func (t *TopRunner) Run(ctx context.Context, M, N uint32) chan Cpu {
 	return ch
 }
 
-func (t *TopRunner) collect(ctx context.Context, seconds uint32, cpus *[]Cpu) error {
-	var i uint32
-
-	for i = 0; i < seconds; i++ {
+func (t *TopRunner) collect(ctx context.Context, seconds int, cpus *[]Cpu) error {
+	for i := 0; i < seconds; i++ {
 		select {
 		case <-ctx.Done():
 		default:

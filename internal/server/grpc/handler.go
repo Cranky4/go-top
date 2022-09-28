@@ -24,14 +24,18 @@ func NewHandler(ctx context.Context, app *app.App, logger *log.Logger) (Handler,
 
 func (h *handler) StreamSnapshots(r *TopService.SnapshotRequest, srv TopService.TopService_StreamSnapshotsServer) error {
 	h.logg.Printf("Client connected with params: m=%d, n=%d", r.M, r.N)
-	ch := h.app.Start(r.M, r.N)
+	ch := h.app.Start(int(r.M), int(r.N))
 
 	for {
 		select {
 		case <-srv.Context().Done():
 			h.logg.Printf("Client disconnected")
 			return nil
-		case s := <-ch:
+		case s, opened := <-ch:
+			if !opened {
+				return nil
+			}
+
 			disksIO := make([]*pb.DiskIO, 0, len(s.DisksIO))
 			for _, d := range s.DisksIO {
 				disksIO = append(disksIO, &pb.DiskIO{
@@ -72,6 +76,25 @@ func (h *handler) StreamSnapshots(r *TopService.SnapshotRequest, srv TopService.
 				})
 			}
 
+			topTalkersByProtocol := make([]*pb.TopTalkerByProtocol, 0, len(s.TopTalkersByProtocol))
+			for _, v := range s.TopTalkersByProtocol {
+				topTalkersByProtocol = append(topTalkersByProtocol, &pb.TopTalkerByProtocol{
+					Protocol: v.Protocol,
+					Bytes:    int32(v.Bytes),
+					Percent:  v.Percent,
+				})
+			}
+
+			topTalkersByTraffic := make([]*pb.TopTalkerByTraffic, 0, len(s.TopTalkersByTraffic))
+			for _, v := range s.TopTalkersByTraffic {
+				topTalkersByTraffic = append(topTalkersByTraffic, &pb.TopTalkerByTraffic{
+					Source:         v.Source,
+					Destination:    v.Destination,
+					Protocol:       v.Protocol,
+					BytesPerSecond: v.BytesPerSecond,
+				})
+			}
+
 			snapshot := pb.Snapshot{
 				Cpu: &pb.Cpu{
 					Avg: &pb.CpuAvg{
@@ -85,37 +108,12 @@ func (h *handler) StreamSnapshots(r *TopService.SnapshotRequest, srv TopService.
 						Idle:   s.Cpu.State.Idle,
 					},
 				},
-				DisksIO:        disksIO,
-				DisksInfo:      disksInfo,
-				ConnectsInfo:   connectsInfo,
-				ConnectsStates: connectsStates,
-
-				// 	TopTalkersByProtocol: []*pb.TopTalkerByProtocol{
-				// 		{
-				// 			Protocol: "UDP",
-				// 			Bytes:    24232,
-				// 			Percent:  "73%",
-				// 		},
-				// 		{
-				// 			Protocol: "TCP",
-				// 			Bytes:    8432,
-				// 			Percent:  "25%",
-				// 		},
-				// 	},
-				// 	TopTalkersByTraffic: []*pb.TopTalkerByTraffic{
-				// 		{
-				// 			Source:         "127.0.0.1",
-				// 			Destination:    "127.0.0.2",
-				// 			Protocol:       "UDP",
-				// 			BytesPerSecond: 174,
-				// 		},
-				// 		{
-				// 			Source:         "127.0.0.1",
-				// 			Destination:    "127.0.0.2",
-				// 			Protocol:       "TCP",
-				// 			BytesPerSecond: 23,
-				// 		},
-				// 	},
+				DisksIO:              disksIO,
+				DisksInfo:            disksInfo,
+				ConnectsInfo:         connectsInfo,
+				ConnectsStates:       connectsStates,
+				TopTalkersByProtocol: topTalkersByProtocol,
+				TopTalkersByTraffic:  topTalkersByTraffic,
 			}
 
 			if err := srv.Send(&snapshot); err != nil {

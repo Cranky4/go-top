@@ -12,13 +12,15 @@ type IostatParser struct {
 
 func NewParser() *IostatParser {
 	return &IostatParser{
-		dataReg: regexp.MustCompile(`([\w]+)\s+([\d\.]+)\s+([\d\.]+)\s+([\d\.]+)`),
+		dataReg: regexp.MustCompile(
+			`^([\w\d]+)\s+([\d\.]+)\s+([\d\.]+)\s+([\d\.]+)\s+([\d\.]+)\s+([\d\.]+)$`,
+		),
 	}
 }
 
-func (t *IostatParser) Parse(in string) ([]DiskIO, error) {
+func (t *IostatParser) Parse(in string) ([]IostatRow, error) {
 	rows := strings.Split(in, "\n")
-	discs := make([]DiskIO, 0, len(rows)-3)
+	discs := make([]IostatRow, 0, len(rows)-3)
 
 	for i := 3; i < len(rows); i++ {
 		if rows[i] == "" {
@@ -27,6 +29,10 @@ func (t *IostatParser) Parse(in string) ([]DiskIO, error) {
 
 		parts := t.dataReg.FindStringSubmatch(rows[i])
 
+		if len(parts) == 0 {
+			return nil, &ErrCannotParseInput{Input: rows[i]}
+		}
+
 		device := parts[1]
 
 		tps, err := strconv.ParseFloat(parts[2], 32)
@@ -34,20 +40,33 @@ func (t *IostatParser) Parse(in string) ([]DiskIO, error) {
 			return nil, err
 		}
 
-		read, err := strconv.ParseFloat(parts[3], 32)
+		kbpsRead, err := strconv.ParseFloat(parts[3], 32)
 		if err != nil {
 			return nil, err
 		}
 
-		write, err := strconv.ParseFloat(parts[4], 32)
+		kbpsWrite, err := strconv.ParseFloat(parts[4], 32)
 		if err != nil {
 			return nil, err
 		}
 
-		discs = append(discs, DiskIO{
-			Device: device,
-			Tps:    float32(tps),
-			Kbps:   float32(read + write),
+		kbRead, err := strconv.Atoi(parts[5])
+		if err != nil {
+			return nil, err
+		}
+
+		kbWrite, err := strconv.Atoi(parts[6])
+		if err != nil {
+			return nil, err
+		}
+
+		discs = append(discs, IostatRow{
+			Device:    device,
+			Tps:       float32(tps),
+			KbpsRead:  float32(kbpsRead),
+			KbpsWrite: float32(kbpsWrite),
+			KbRead:    kbRead,
+			KbWrite:   kbWrite,
 		})
 	}
 

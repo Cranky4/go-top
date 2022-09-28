@@ -16,7 +16,7 @@ type Config struct {
 }
 
 type AppConf struct {
-	TopPath, IostatPath, DfPath, TcpDumpPath, NetStatPath string
+	TopPath, IostatPath, DfPath, TcpDumpPath, TimeoutPath, NetStatPath string
 }
 type MetricsConf struct {
 	Cpu, Disks, Network, Connections bool

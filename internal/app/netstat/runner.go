@@ -22,7 +22,7 @@ func New(commandPath string, logg Logger, parser Parser) *NetstatRunner {
 	}
 }
 
-func (t *NetstatRunner) Run(ctx context.Context, M, N uint32) chan ConnectData {
+func (t *NetstatRunner) Run(ctx context.Context, M, N int) chan ConnectData {
 	ch := make(chan ConnectData)
 	t.logg.Debug("[NetstatRunner] started")
 
@@ -51,6 +51,7 @@ func (t *NetstatRunner) Run(ctx context.Context, M, N uint32) chan ConnectData {
 		case ch <- connectData:
 			t.logg.Debug("[NetstatRunner] warmed up")
 			infos = infos[N:]
+			states = states[N:]
 		}
 
 		// collect
@@ -84,13 +85,11 @@ func (t *NetstatRunner) Run(ctx context.Context, M, N uint32) chan ConnectData {
 
 func (t *NetstatRunner) collect(
 	ctx context.Context,
-	seconds uint32,
+	seconds int,
 	connectsInfos *[][]ConnectInfo,
 	connectsStates *[][]ConnectState,
 ) error {
-	var i uint32
-
-	for i = 0; i < seconds; i++ {
+	for i := 0; i < seconds; i++ {
 		select {
 		case <-ctx.Done():
 		default:

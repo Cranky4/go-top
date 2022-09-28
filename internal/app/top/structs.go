@@ -1,5 +1,7 @@
 package apptop
 
+import "fmt"
+
 type Cpu struct {
 	Avg   CpuAvg
 	State CpuState
@@ -20,4 +22,13 @@ type Logger interface {
 	Info(msg string)
 	Warn(msg string)
 	Error(msg string)
+}
+
+// errors
+type ErrCannotParseInput struct {
+	Input string
+}
+
+func (e *ErrCannotParseInput) Error() string {
+	return fmt.Sprintf("cannot parse %s", e.Input)
 }

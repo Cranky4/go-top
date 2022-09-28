@@ -3,7 +3,6 @@ package main
 import (
 	"context"
 	"flag"
-	"fmt"
 	"log"
 	"os"
 	"os/signal"
@@ -52,11 +51,6 @@ func main() {
 	defer cancel()
 
 	logg.Info("app is running...")
-
-	// test
-	for s := range app.Start(10, 5) {
-		fmt.Printf("%#v\n", s)
-	}
 
 	<-ctx.Done()
 }

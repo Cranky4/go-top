@@ -14,7 +14,7 @@ type NetStatParser struct {
 func NewParser(logg Logger) Parser {
 	return &NetStatParser{
 		dataReg: regexp.MustCompile(
-			`([\w]+)\s+([\d]+)\s+([\d]+)\s+([\d\:\.\*]+)\s+([\d\:\.\*]+)\s+([\w]+)\s+([\d\w\/\-]+)`,
+			`^([\w]+)\s+([\d]+)\s+([\d]+)\s+([\d\:\.\*]+)\s+([\d\:\.\*]+)\s+([\w]+)\s+([\d\w\/\-]+)\s+$`,
 		),
 		logg: logg,
 	}
@@ -30,6 +30,10 @@ func (t *NetStatParser) Parse(in string) ([]NetStatRow, error) {
 		}
 
 		parts := t.dataReg.FindStringSubmatch(rows[i])
+
+		if len(parts) == 0 {
+			return nil, &ErrCannotParseInput{Input: rows[i]}
+		}
 
 		proto := parts[1]
 

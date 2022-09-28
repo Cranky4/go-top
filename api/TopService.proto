@@ -147,7 +147,7 @@ message TopTalkerByTraffic {
     string source = 1; // 172.21.0.1.52978
     string destination = 2; // 239.255.255.250.1900
     string protocol = 3; // udp
-    int64 bytesPerSecond = 4; // 173 ?
+    float bytesPerSecond = 4; // 173 ?
 }
 // ------------------------------------------------------
 

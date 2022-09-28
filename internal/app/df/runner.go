@@ -22,7 +22,7 @@ func New(commandPath string, logg Logger, parser Parser) *IostatRunner {
 	}
 }
 
-func (t *IostatRunner) Run(ctx context.Context, M, N uint32) chan []DiskInfo {
+func (t *IostatRunner) Run(ctx context.Context, M, N int) chan []DiskInfo {
 	ch := make(chan []DiskInfo)
 	t.logg.Debug("[DfRunner] started")
 
@@ -74,10 +74,8 @@ func (t *IostatRunner) Run(ctx context.Context, M, N uint32) chan []DiskInfo {
 	return ch
 }
 
-func (t *IostatRunner) collect(ctx context.Context, seconds uint32, disks *[][]DiskInfo) error {
-	var i uint32
-
-	for i = 0; i < seconds; i++ {
+func (t *IostatRunner) collect(ctx context.Context, seconds int, disks *[][]DiskInfo) error {
+	for i := 0; i < seconds; i++ {
 		select {
 		case <-ctx.Done():
 		default:

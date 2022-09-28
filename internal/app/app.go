@@ -7,6 +7,7 @@ import (
 	appdf "github.com/Cranky4/go-top/internal/app/df"
 	appiostat "github.com/Cranky4/go-top/internal/app/iostat"
 	appnetstat "github.com/Cranky4/go-top/internal/app/netstat"
+	apptcpdump "github.com/Cranky4/go-top/internal/app/tcpdump"
 	apptop "github.com/Cranky4/go-top/internal/app/top"
 )
 
@@ -22,7 +23,7 @@ func New(ctx context.Context, conf Config, logg Logger) *App {
 	return &App{ctx: ctx, conf: conf, logg: logg}
 }
 
-func (t *App) Start(warmUpTime, recordPeriod uint32) <-chan Snapshot {
+func (t *App) Start(warmUpTime, recordPeriod int) <-chan Snapshot {
 	ch := make(chan Snapshot)
 
 	go t.work(warmUpTime, recordPeriod, ch)
@@ -30,7 +31,7 @@ func (t *App) Start(warmUpTime, recordPeriod uint32) <-chan Snapshot {
 	return ch
 }
 
-func (t *App) work(M, N uint32, ch chan Snapshot) {
+func (t *App) work(M, N int, ch chan Snapshot) {
 	defer close(ch)
 	t.logg.Debug("[APP] started... Hello!")
 
@@ -54,17 +55,26 @@ func (t *App) work(M, N uint32, ch chan Snapshot) {
 		t.logg.Debug("[APP] discs metric is disabled")
 	}
 
-	// chan
+	var talkersCh chan apptcpdump.TopTalkers
 	if t.conf.Metrics.Network {
-		// tcpDumpRunner := apptcpdump.New(t.conf.App.TcpDumpPath, t.logg, apptcpdump.NewParser())
-		// chan = tcpDumpRunner.Run(t.ctx, M, N)
+		tcpDumpRunner := apptcpdump.New(
+			t.conf.App.TimeoutPath,
+			t.conf.App.TcpDumpPath,
+			t.logg,
+			apptcpdump.NewParser(t.logg),
+		)
+		talkersCh = tcpDumpRunner.Run(t.ctx, M, N)
 	} else {
 		t.logg.Debug("[APP] network metric is disabled")
 	}
 
 	var connsCh chan appnetstat.ConnectData
 	if t.conf.Metrics.Connections {
-		netStatRunner := appnetstat.New(t.conf.App.NetStatPath, t.logg, appnetstat.NewParser(t.logg))
+		netStatRunner := appnetstat.New(
+			t.conf.App.NetStatPath,
+			t.logg,
+			appnetstat.NewParser(t.logg),
+		)
 		connsCh = netStatRunner.Run(t.ctx, M, N)
 	} else {
 		t.logg.Debug("[APP] connection metrics disabled")
@@ -76,34 +86,74 @@ L:
 		case <-t.ctx.Done():
 			break L
 		default:
+			// проверять закрытие каналов
 			var cpu apptop.Cpu
+			var cpuOpened bool
 			if t.conf.Metrics.Cpu {
 				t.logg.Debug("[APP] waiting cpu")
-				cpu = <-cpuCh
+				cpu, cpuOpened = <-cpuCh
+
+				if !cpuOpened {
+					t.logg.Debug("[APP] cpu channel is closed")
+					break L
+				}
 			}
 
 			var disksIO []appiostat.DiskIO
+			var disksIOOpened bool
+
 			var disksInfo []appdf.DiskInfo
+			var disksInfoOpened bool
 			if t.conf.Metrics.Disks {
 				t.logg.Debug("[APP] waiting disks io")
-				disksIO = <-disksIOCh
+				disksIO, disksIOOpened = <-disksIOCh
+
+				if !disksIOOpened {
+					t.logg.Debug("[APP] disks io is closed")
+					break L
+				}
 
 				t.logg.Debug("[APP] waiting disks stats")
-				disksInfo = <-disksStatCh
+				disksInfo, disksInfoOpened = <-disksStatCh
+
+				if !disksInfoOpened {
+					t.logg.Debug("[APP] disks info is closed")
+					break L
+				}
+			}
+
+			var talkers apptcpdump.TopTalkers
+			var talkersChOpened bool
+			if t.conf.Metrics.Network {
+				t.logg.Debug("[APP] waiting connections")
+				talkers, talkersChOpened = <-talkersCh
+
+				if !talkersChOpened {
+					t.logg.Debug("[APP] network talkers channel is closed")
+					break L
+				}
 			}
 
 			var conns appnetstat.ConnectData
+			var connsChOpened bool
 			if t.conf.Metrics.Connections {
 				t.logg.Debug("[APP] waiting connections")
-				conns = <-connsCh
+				conns, connsChOpened = <-connsCh
+
+				if !connsChOpened {
+					t.logg.Debug("[APP] connections channel is closed")
+					break L
+				}
 			}
 
 			ch <- Snapshot{
-				Cpu:            cpu,
-				DisksIO:        disksIO,
-				DisksInfo:      disksInfo,
-				ConnectsInfo:   conns.Infos,
-				ConnectsStates: conns.States,
+				Cpu:                  cpu,
+				DisksIO:              disksIO,
+				DisksInfo:            disksInfo,
+				ConnectsInfo:         conns.Infos,
+				ConnectsStates:       conns.States,
+				TopTalkersByProtocol: talkers.ByProtocol,
+				TopTalkersByTraffic:  talkers.ByTraffic,
 			}
 		}
 	}

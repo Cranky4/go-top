@@ -1,5 +1,7 @@
 package appdf
 
+import "fmt"
+
 type Logger interface {
 	Debug(msg string)
 	Info(msg string)
@@ -20,4 +22,13 @@ type DiskInfo struct {
 type Parser interface {
 	ParseBytes(in string) ([]DiskInfo, error)
 	ParseInodes(in string) ([]DiskInfo, error)
+}
+
+// errors
+type ErrCannotParseInput struct {
+	Input string
+}
+
+func (e *ErrCannotParseInput) Error() string {
+	return fmt.Sprintf("cannot parse %s", e.Input)
 }

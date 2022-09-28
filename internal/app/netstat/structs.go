@@ -1,5 +1,7 @@
 package appnetstat
 
+import "fmt"
+
 type Logger interface {
 	Debug(msg string)
 	Info(msg string)
@@ -34,4 +36,13 @@ type ConnectState struct {
 	ID       string
 	Protocol string // tcp
 	State    string // listen
+}
+
+// errors
+type ErrCannotParseInput struct {
+	Input string
+}
+
+func (e *ErrCannotParseInput) Error() string {
+	return fmt.Sprintf("cannot parse %s", e.Input)
 }

@@ -13,8 +13,10 @@ type DfParser struct {
 
 func NewParser(logg Logger) *DfParser {
 	return &DfParser{
-		dataReg: regexp.MustCompile(`([\w\/]+)\s+([\d]+)\s+([\d]+)\s+([\d]+)\s+([\d]+)`),
-		logg:    logg,
+		dataReg: regexp.MustCompile(
+			`^([\w\/]+)\s+([\d]+)\s+([\d]+)\s+([\d]+)\s+([\d\-]+)%?\s+([\w\/]+)$`,
+		),
+		logg: logg,
 	}
 }
 
@@ -29,6 +31,10 @@ func (t *DfParser) ParseBytes(in string) ([]DiskInfo, error) {
 
 		parts := t.dataReg.FindStringSubmatch(rows[i])
 
+		if len(parts) == 0 {
+			return nil, &ErrCannotParseInput{Input: rows[i]}
+		}
+
 		device := parts[1]
 
 		used, err := strconv.Atoi(parts[3])
@@ -41,9 +47,12 @@ func (t *DfParser) ParseBytes(in string) ([]DiskInfo, error) {
 			return nil, err
 		}
 
-		usage, err := strconv.Atoi(parts[5])
-		if err != nil {
-			return nil, err
+		var usage int
+		if parts[5] != "-" {
+			usage, err = strconv.Atoi(parts[5])
+			if err != nil {
+				return nil, err
+			}
 		}
 
 		discs = append(discs, DiskInfo{
@@ -73,19 +82,22 @@ func (t *DfParser) ParseInodes(in string) ([]DiskInfo, error) {
 
 		device := parts[1]
 
+		available, err := strconv.Atoi(parts[2])
+		if err != nil {
+			return nil, err
+		}
+
 		used, err := strconv.Atoi(parts[3])
 		if err != nil {
 			return nil, err
 		}
 
-		available, err := strconv.Atoi(parts[4])
-		if err != nil {
-			return nil, err
-		}
-
-		usage, err := strconv.Atoi(parts[5])
-		if err != nil {
-			return nil, err
+		var usage int
+		if parts[5] != "-" {
+			usage, err = strconv.Atoi(parts[5])
+			if err != nil {
+				return nil, err
+			}
 		}
 
 		discs = append(discs, DiskInfo{

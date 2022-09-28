@@ -24,7 +24,7 @@ func New(commandPath string, logg Logger) *IostatRunner {
 	}
 }
 
-func (t *IostatRunner) Run(ctx context.Context, M, N uint32) chan []DiskIO {
+func (t *IostatRunner) Run(ctx context.Context, M, N int) chan []DiskIO {
 	ch := make(chan []DiskIO)
 	t.logg.Debug("[IostatRunner] started")
 
@@ -76,10 +76,8 @@ func (t *IostatRunner) Run(ctx context.Context, M, N uint32) chan []DiskIO {
 	return ch
 }
 
-func (t *IostatRunner) collect(ctx context.Context, seconds uint32, data *[][]DiskIO) error {
-	var i uint32
-
-	for i = 0; i < seconds; i++ {
+func (t *IostatRunner) collect(ctx context.Context, seconds int, data *[][]DiskIO) error {
+	for i := 0; i < seconds; i++ {
 		select {
 		case <-ctx.Done():
 		default:
@@ -96,12 +94,21 @@ func (t *IostatRunner) collect(ctx context.Context, seconds uint32, data *[][]Di
 				return err
 			}
 
-			item, err := t.parser.Parse(out.String())
+			rows, err := t.parser.Parse(out.String())
 			if err != nil {
 				return err
 			}
 
-			*data = append(*data, item)
+			ios := make([]DiskIO, 0, len(rows))
+			for _, r := range rows {
+				ios = append(ios, DiskIO{
+					Device: r.Device,
+					Tps:    r.Tps,
+					Kbps:   r.KbpsRead + r.KbpsWrite,
+				})
+			}
+
+			*data = append(*data, ios)
 
 			time.Sleep(1 * time.Second)
 		}

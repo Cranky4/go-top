@@ -9,12 +9,14 @@ import (
 
 type TcpDumpParser struct {
 	dataReg *regexp.Regexp
+	logg    Logger
 }
 
-func NewParser() *TcpDumpParser {
+func NewParser(logg Logger) *TcpDumpParser {
 	return &TcpDumpParser{
+		logg: logg,
 		dataReg: regexp.MustCompile(
-			`(\d+:\d+:\d+.\d+).*?(\d+.\d+.\d+.\d+.\d+).*?>.*?(\d+.\d+.\d+.\d+.\d+).*?(tcp|udp|icmp).*?[length]?\s(\d+)$`,
+			`^(\d+\-\d+\-\d+\s\d+:\d+:\d+.\d+).*?(\w+).*?([\w\d\.\:]+).*?>.*?([\w\d\.\:]+)\:.*?(\w+).*?[length]?\s(\d+)$`,
 		),
 	}
 }
@@ -30,26 +32,34 @@ func (t *TcpDumpParser) Parse(in string) ([]TcpDumpLine, error) {
 
 		parts := t.dataReg.FindStringSubmatch(rows[i])
 
-		time, err := time.Parse("15:04:05.999999999", parts[1])
+		if len(parts) == 0 {
+			err := &ErrCannotParseInput{Input: rows[i]}
+			t.logg.Warn(err.Error())
+			continue
+		}
+
+		time, err := time.Parse("2006-01-02 15:04:05.999999999", parts[1])
 		if err != nil {
 			return nil, err
 		}
 
-		source := parts[2]
-		destination := parts[3]
-		protocol := parts[4]
+		typ := parts[2]
+		source := parts[3]
+		destination := parts[4]
+		protocol := parts[5]
 
-		bytes, err := strconv.Atoi(parts[5])
+		bytes, err := strconv.Atoi(parts[6])
 		if err != nil {
 			return nil, err
 		}
 
 		result = append(result, TcpDumpLine{
 			Time:        time,
+			Type:        typ,
 			Source:      source,
 			Destination: destination,
 			Protocol:    protocol,
-			Bytes:       int64(bytes),
+			Bytes:       bytes,
 		})
 	}
 
