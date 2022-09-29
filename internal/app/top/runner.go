@@ -11,15 +11,15 @@ import (
 type TopRunner struct {
 	commandPath string
 	args        []string
-	parser      *TopParser
+	parser      Parser
 	logg        Logger
 }
 
-func New(commandPath string, logg Logger) *TopRunner {
+func New(commandPath string, parser Parser, logg Logger) *TopRunner {
 	return &TopRunner{
 		commandPath: commandPath,
 		args:        []string{"-b", "-n1"},
-		parser:      NewParser(),
+		parser:      parser,
 		logg:        logg,
 	}
 }
@@ -101,7 +101,9 @@ func (t *TopRunner) collect(ctx context.Context, seconds int, cpus *[]Cpu) error
 
 			*cpus = append(*cpus, cpu)
 
-			time.Sleep(1 * time.Second)
+			if seconds > 1 {
+				time.Sleep(1 * time.Second)
+			}
 		}
 	}
 

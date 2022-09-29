@@ -11,7 +11,6 @@ import (
 
 type TcpDumpRunner struct {
 	commandPath, timeoutPath string
-	args                     []string
 	parser                   Parser
 	logg                     Logger
 }

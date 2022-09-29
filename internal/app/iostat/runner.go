@@ -11,15 +11,15 @@ import (
 type IostatRunner struct {
 	commandPath string
 	args        []string
-	parser      *IostatParser
+	parser      Parser
 	logg        Logger
 }
 
-func New(commandPath string, logg Logger) *IostatRunner {
+func New(commandPath string, logg Logger, parser Parser) *IostatRunner {
 	return &IostatRunner{
 		commandPath: commandPath,
 		args:        []string{"-d", "-k"},
-		parser:      NewParser(),
+		parser:      parser,
 		logg:        logg,
 	}
 }
@@ -110,7 +110,9 @@ func (t *IostatRunner) collect(ctx context.Context, seconds int, data *[][]DiskI
 
 			*data = append(*data, ios)
 
-			time.Sleep(1 * time.Second)
+			if seconds > 1 {
+				time.Sleep(1 * time.Second)
+			}
 		}
 	}
 
@@ -124,7 +126,7 @@ func (t *IostatRunner) calculateAvg(disks [][]DiskIO) []DiskIO {
 		for _, d := range dd {
 			_, ex := devices[d.Device]
 			if !ex {
-				devices[d.Device] = make([][]float32, 2, 2)
+				devices[d.Device] = make([][]float32, 2)
 			}
 
 			devices[d.Device][0] = append(devices[d.Device][0], d.Tps)

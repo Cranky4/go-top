@@ -13,7 +13,6 @@ type Handler = pb.TopServiceServer
 
 type handler struct {
 	pb.UnimplementedTopServiceServer
-	ctx  context.Context
 	app  *app.App
 	logg *log.Logger
 }

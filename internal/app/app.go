@@ -15,7 +15,6 @@ type App struct {
 	ctx  context.Context
 	conf Config
 	logg Logger
-	snps map[int64]Snapshot
 }
 
 func New(ctx context.Context, conf Config, logg Logger) *App {
@@ -37,7 +36,7 @@ func (t *App) work(M, N int, ch chan Snapshot) {
 
 	var cpuCh chan apptop.Cpu
 	if t.conf.Metrics.Cpu {
-		topRunner := apptop.New(t.conf.App.TopPath, t.logg)
+		topRunner := apptop.New(t.conf.App.TopPath, apptop.NewParser(), t.logg)
 		cpuCh = topRunner.Run(t.ctx, M, N)
 	} else {
 		t.logg.Debug("[APP] CPU metric is disabled")
@@ -46,7 +45,7 @@ func (t *App) work(M, N int, ch chan Snapshot) {
 	var disksIOCh chan []appiostat.DiskIO
 	var disksStatCh chan []appdf.DiskInfo
 	if t.conf.Metrics.Disks {
-		iostatRunner := appiostat.New(t.conf.App.IostatPath, t.logg)
+		iostatRunner := appiostat.New(t.conf.App.IostatPath, t.logg, appiostat.NewParser())
 		disksIOCh = iostatRunner.Run(t.ctx, M, N)
 
 		dfRunner := appdf.New(t.conf.App.DfPath, t.logg, appdf.NewParser(t.logg))

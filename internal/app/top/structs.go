@@ -17,6 +17,10 @@ type CpuState struct {
 	User, System, Idle float32
 }
 
+type Parser interface {
+	Parse(in string) (Cpu, error)
+}
+
 type Logger interface {
 	Debug(msg string)
 	Info(msg string)

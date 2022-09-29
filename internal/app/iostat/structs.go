@@ -20,6 +20,10 @@ type Logger interface {
 	Error(msg string)
 }
 
+type Parser interface {
+	Parse(in string) ([]IostatRow, error)
+}
+
 // errors
 type ErrCannotParseInput struct {
 	Input string

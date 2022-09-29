@@ -10,7 +10,7 @@ lint: install-lint-deps
 	golangci-lint run ./...
 
 test:
-	go test ./...
+	go test ./... -race -count 100
 
 # Top
 build:

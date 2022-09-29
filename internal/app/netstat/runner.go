@@ -132,7 +132,9 @@ func (t *NetstatRunner) collect(
 			*connectsInfos = append(*connectsInfos, connects)
 			*connectsStates = append(*connectsStates, states)
 
-			time.Sleep(1 * time.Second)
+			if seconds > 1 {
+				time.Sleep(1 * time.Second)
+			}
 		}
 	}
 

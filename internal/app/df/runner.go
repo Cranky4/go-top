@@ -143,7 +143,9 @@ func (t *IostatRunner) collect(ctx context.Context, seconds int, disks *[][]Disk
 			}
 			*disks = append(*disks, currentDiscs)
 
-			time.Sleep(1 * time.Second)
+			if seconds > 1 {
+				time.Sleep(1 * time.Second)
+			}
 		}
 	}
 
@@ -157,7 +159,7 @@ func (t *IostatRunner) calculateAvg(disks [][]DiskInfo) []DiskInfo {
 		for _, d := range dd {
 			_, ex := devices[d.Name]
 			if !ex {
-				devices[d.Name] = make([][]int, 6, 6)
+				devices[d.Name] = make([][]int, 6)
 			}
 
 			devices[d.Name][0] = append(devices[d.Name][0], d.AvailableBytes)
