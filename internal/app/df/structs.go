@@ -24,7 +24,6 @@ type Parser interface {
 	ParseInodes(in string) ([]DiskInfo, error)
 }
 
-// errors
 type ErrCannotParseInput struct {
 	Input string
 }

@@ -22,15 +22,15 @@ func New(commandPath string, logg Logger, parser Parser) *IostatRunner {
 	}
 }
 
-func (t *IostatRunner) Run(ctx context.Context, M, N int) chan []DiskInfo {
+func (t *IostatRunner) Run(ctx context.Context, m, n int) chan []DiskInfo {
 	ch := make(chan []DiskInfo)
 	t.logg.Debug("[DfRunner] started")
 
 	go func() {
 		defer close(ch)
-		data := make([][]DiskInfo, 0, M)
+		data := make([][]DiskInfo, 0, m)
 
-		err := t.collect(ctx, M, &data)
+		err := t.collect(ctx, m, &data)
 		if err != nil {
 			t.logg.Error(
 				fmt.Sprintf("[DfRunner] err: %s", err),
@@ -46,12 +46,12 @@ func (t *IostatRunner) Run(ctx context.Context, M, N int) chan []DiskInfo {
 			return
 		case ch <- avg:
 			t.logg.Debug("[DfRunner] warmed up")
-			data = data[N:]
+			data = data[n:]
 		}
 
 		// collect
 		for {
-			err = t.collect(ctx, N, &data)
+			err = t.collect(ctx, n, &data)
 			if err != nil {
 				t.logg.Error(
 					fmt.Sprintf("[DfRunner] err: %s", err),
@@ -66,7 +66,7 @@ func (t *IostatRunner) Run(ctx context.Context, M, N int) chan []DiskInfo {
 				return
 			case ch <- avg:
 				t.logg.Debug("[DfRunner] collected")
-				data = data[N:]
+				data = data[n:]
 			}
 		}
 	}()
@@ -80,11 +80,7 @@ func (t *IostatRunner) collect(ctx context.Context, seconds int, disks *[][]Disk
 		case <-ctx.Done():
 		default:
 			// df -k
-			cmd := exec.CommandContext(
-				ctx,
-				t.commandPath,
-				"-k",
-			)
+			cmd := exec.CommandContext(ctx, t.commandPath, "-k") //nolint:gosec
 
 			var out bytes.Buffer
 			cmd.Stdout = &out
@@ -99,11 +95,7 @@ func (t *IostatRunner) collect(ctx context.Context, seconds int, disks *[][]Disk
 			}
 
 			// df -i
-			cmd = exec.CommandContext(
-				ctx,
-				t.commandPath,
-				"-i",
-			)
+			cmd = exec.CommandContext(ctx, t.commandPath, "-i") //nolint:gosec
 			cmd.Stdout = &out
 
 			if err := cmd.Run(); err != nil {
@@ -116,26 +108,7 @@ func (t *IostatRunner) collect(ctx context.Context, seconds int, disks *[][]Disk
 			}
 
 			// merge output
-			merged := make(map[string]DiskInfo)
-			for _, d := range diskBytes {
-				merged[d.Name] = DiskInfo{
-					Name:           d.Name,
-					AvailableBytes: d.AvailableBytes,
-					UsedBytes:      d.UsedBytes,
-					UsageBytes:     d.UsageBytes,
-				}
-			}
-
-			for _, v := range diskInodes {
-				d, ex := merged[v.Name]
-				if ex {
-					d.AvailableInodes = v.AvailableInodes
-					d.UsedInodes = v.UsedInodes
-					d.UsageInodes = v.UsageInodes
-
-					merged[v.Name] = d
-				}
-			}
+			merged := t.merge(diskBytes, diskInodes)
 
 			currentDiscs := make([]DiskInfo, 0, len(merged))
 			for _, di := range merged {
@@ -150,6 +123,31 @@ func (t *IostatRunner) collect(ctx context.Context, seconds int, disks *[][]Disk
 	}
 
 	return nil
+}
+
+func (*IostatRunner) merge(diskBytes []DiskInfo, diskInodes []DiskInfo) map[string]DiskInfo {
+	merged := make(map[string]DiskInfo)
+	for _, d := range diskBytes {
+		merged[d.Name] = DiskInfo{
+			Name:           d.Name,
+			AvailableBytes: d.AvailableBytes,
+			UsedBytes:      d.UsedBytes,
+			UsageBytes:     d.UsageBytes,
+		}
+	}
+
+	for _, v := range diskInodes {
+		d, ex := merged[v.Name]
+		if ex {
+			d.AvailableInodes = v.AvailableInodes
+			d.UsedInodes = v.UsedInodes
+			d.UsageInodes = v.UsageInodes
+
+			merged[v.Name] = d
+		}
+	}
+
+	return merged
 }
 
 func (t *IostatRunner) calculateAvg(disks [][]DiskInfo) []DiskInfo {
@@ -175,37 +173,37 @@ func (t *IostatRunner) calculateAvg(disks [][]DiskInfo) []DiskInfo {
 
 	for d, values := range devices {
 		bytesAvailable := values[0]
-		var bytesAvailableSum int = 0
+		var bytesAvailableSum int
 		for _, v := range bytesAvailable {
 			bytesAvailableSum += v
 		}
 
 		usedBytes := values[1]
-		var usedBytesSum int = 0
+		var usedBytesSum int
 		for _, v := range usedBytes {
 			usedBytesSum += v
 		}
 
 		usageBytes := values[2]
-		var usageBytesSum int = 0
+		var usageBytesSum int
 		for _, v := range usageBytes {
 			usageBytesSum += v
 		}
 
 		inodeAvailable := values[3]
-		var inodeAvailableSum int = 0
+		var inodeAvailableSum int
 		for _, v := range inodeAvailable {
 			inodeAvailableSum += v
 		}
 
 		usedInodes := values[4]
-		var usedInodesSum int = 0
+		var usedInodesSum int
 		for _, v := range usedInodes {
 			usedInodesSum += v
 		}
 
 		usageInodes := values[5]
-		var usageInodesSum int = 0
+		var usageInodesSum int
 		for _, v := range usageInodes {
 			usageInodesSum += v
 		}

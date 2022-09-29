@@ -9,14 +9,14 @@ import (
 
 type TParser struct{}
 
-func (p *TParser) Parse(in string) (Cpu, error) {
-	return Cpu{
-		Avg: CpuAvg{
+func (p *TParser) Parse(in string) (CPU, error) {
+	return CPU{
+		Avg: CPUAvg{
 			Min:     float32(0.23),
 			Five:    float32(0.19),
 			Fifteen: float32(0.13),
 		},
-		State: CpuState{
+		State: CPUState{
 			User:   float32(0.02),
 			System: float32(0.12),
 			Idle:   float32(0.86),
@@ -55,13 +55,13 @@ func TestRun(t *testing.T) {
 
 	ch := runner.Run(ctx, 1, 1)
 
-	ex := Cpu{
-		Avg: CpuAvg{
+	ex := CPU{
+		Avg: CPUAvg{
 			Min:     float32(0.23),
 			Five:    float32(0.19),
 			Fifteen: float32(0.13),
 		},
-		State: CpuState{
+		State: CPUState{
 			User:   float32(0.02),
 			System: float32(0.12),
 			Idle:   float32(0.86),

@@ -48,10 +48,6 @@ func TestParseInodes(t *testing.T) {
 		require.True(t, errors.As(err, &expErr))
 		require.Nil(t, out)
 	})
-}
-
-func TestParseBytes(t *testing.T) {
-	parser := NewParser(nil)
 
 	t.Run("succeeded parsed df bytes output", func(t *testing.T) {
 		in := "Filesystem      1K-blocks      Used Available Use% Mounted on\n" +

@@ -24,15 +24,15 @@ func New(commandPath string, logg Logger, parser Parser) *IostatRunner {
 	}
 }
 
-func (t *IostatRunner) Run(ctx context.Context, M, N int) chan []DiskIO {
+func (t *IostatRunner) Run(ctx context.Context, m, n int) chan []DiskIO {
 	ch := make(chan []DiskIO)
 	t.logg.Debug("[IostatRunner] started")
 
 	go func() {
 		defer close(ch)
-		data := make([][]DiskIO, 0, M)
+		data := make([][]DiskIO, 0, m)
 
-		err := t.collect(ctx, M, &data)
+		err := t.collect(ctx, m, &data)
 		if err != nil {
 			t.logg.Error(
 				fmt.Sprintf("[IostatRunner] err: %s", err),
@@ -48,12 +48,12 @@ func (t *IostatRunner) Run(ctx context.Context, M, N int) chan []DiskIO {
 			return
 		case ch <- avg:
 			t.logg.Debug("[IostatRunner] warmed up")
-			data = data[N:]
+			data = data[n:]
 		}
 
 		// collect
 		for {
-			err = t.collect(ctx, N, &data)
+			err = t.collect(ctx, n, &data)
 			if err != nil {
 				t.logg.Error(
 					fmt.Sprintf("[IostatRunner] err: %s", err),
@@ -68,7 +68,7 @@ func (t *IostatRunner) Run(ctx context.Context, M, N int) chan []DiskIO {
 				return
 			case ch <- avg:
 				t.logg.Debug("[IostatRunner] collected")
-				data = data[N:]
+				data = data[n:]
 			}
 		}
 	}()
@@ -81,11 +81,7 @@ func (t *IostatRunner) collect(ctx context.Context, seconds int, data *[][]DiskI
 		select {
 		case <-ctx.Done():
 		default:
-			cmd := exec.CommandContext(
-				ctx,
-				t.commandPath,
-				t.args...,
-			)
+			cmd := exec.CommandContext(ctx, t.commandPath, t.args...) //nolint:gosec
 
 			var out bytes.Buffer
 			cmd.Stdout = &out

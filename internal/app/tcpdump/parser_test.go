@@ -29,7 +29,7 @@ func TestParse(t *testing.T) {
 		time2, err := time.Parse("2006-01-02 15:04:05.999999999", "2022-09-29 17:27:45.023316")
 		require.Nil(t, err)
 
-		ex := []TcpDumpLine{
+		ex := []TCPDumpLine{
 			{
 				Time:        time1,
 				Type:        "IP6",

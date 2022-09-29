@@ -23,13 +23,13 @@ func TestParse(t *testing.T) {
 			"16773 root      20   0   18520   3536   3120 S   0.0  0.0   0:00.01 bash\n" +
 			"18934 root      20   0   36500   3144   2788 R   0.0  0.0   0:00.00 top\n"
 
-		ex := Cpu{
-			Avg: CpuAvg{
+		ex := CPU{
+			Avg: CPUAvg{
 				Min:     0.6,
 				Five:    0.56,
 				Fifteen: 0.62,
 			},
-			State: CpuState{
+			State: CPUState{
 				User:   1.9,
 				System: 1.1,
 				Idle:   96.4,

@@ -7,13 +7,13 @@ import (
 	"time"
 )
 
-type TcpDumpParser struct {
+type TCPDumpParser struct {
 	dataReg *regexp.Regexp
 	logg    Logger
 }
 
-func NewParser(logg Logger) *TcpDumpParser {
-	return &TcpDumpParser{
+func NewParser(logg Logger) *TCPDumpParser {
+	return &TCPDumpParser{
 		logg: logg,
 		dataReg: regexp.MustCompile(
 			`^(\d+\-\d+\-\d+\s\d+:\d+:\d+.\d+).*?(\w+).*?([\w\d\.\:]+).*?>.*?([\w\d\.\:]+)\:.*?(\w+).*?[length]?\s(\d+)$`,
@@ -21,9 +21,9 @@ func NewParser(logg Logger) *TcpDumpParser {
 	}
 }
 
-func (t *TcpDumpParser) Parse(in string) ([]TcpDumpLine, error) {
+func (t *TCPDumpParser) Parse(in string) ([]TCPDumpLine, error) {
 	rows := strings.Split(in, "\n")
-	result := make([]TcpDumpLine, 0, len(rows))
+	result := make([]TCPDumpLine, 0, len(rows))
 
 	for i := 1; i < len(rows); i++ {
 		if rows[i] == "" {
@@ -53,7 +53,7 @@ func (t *TcpDumpParser) Parse(in string) ([]TcpDumpLine, error) {
 			return nil, err
 		}
 
-		result = append(result, TcpDumpLine{
+		result = append(result, TCPDumpLine{
 			Time:        time,
 			Type:        typ,
 			Source:      source,

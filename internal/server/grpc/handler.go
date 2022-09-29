@@ -4,7 +4,6 @@ import (
 	"context"
 	"log"
 
-	"github.com/Cranky4/go-top/api/TopService"
 	pb "github.com/Cranky4/go-top/api/TopService"
 	"github.com/Cranky4/go-top/internal/app"
 )
@@ -21,7 +20,7 @@ func NewHandler(ctx context.Context, app *app.App, logger *log.Logger) (Handler,
 	return &handler{app: app, logg: logger}, nil
 }
 
-func (h *handler) StreamSnapshots(r *TopService.SnapshotRequest, srv TopService.TopService_StreamSnapshotsServer) error {
+func (h *handler) StreamSnapshots(r *pb.SnapshotRequest, srv pb.TopService_StreamSnapshotsServer) error {
 	h.logg.Printf("Client connected with params: m=%d, n=%d", r.M, r.N)
 	ch := h.app.Start(int(r.M), int(r.N))
 
@@ -97,14 +96,14 @@ func (h *handler) StreamSnapshots(r *TopService.SnapshotRequest, srv TopService.
 			snapshot := pb.Snapshot{
 				Cpu: &pb.Cpu{
 					Avg: &pb.CpuAvg{
-						Min:     s.Cpu.Avg.Min,
-						Five:    s.Cpu.Avg.Five,
-						Fifteen: s.Cpu.Avg.Fifteen,
+						Min:     s.CPU.Avg.Min,
+						Five:    s.CPU.Avg.Five,
+						Fifteen: s.CPU.Avg.Fifteen,
 					},
 					State: &pb.CpuState{
-						User:   s.Cpu.State.User,
-						System: s.Cpu.State.System,
-						Idle:   s.Cpu.State.Idle,
+						User:   s.CPU.State.User,
+						System: s.CPU.State.System,
+						Idle:   s.CPU.State.Idle,
 					},
 				},
 				DisksIO:              disksIO,

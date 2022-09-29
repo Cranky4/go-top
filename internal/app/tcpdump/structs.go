@@ -17,7 +17,7 @@ type TopTalkers struct {
 	ByTraffic  []TopTalkerByTraffic
 }
 
-type TcpDumpLine struct {
+type TCPDumpLine struct {
 	Time                                time.Time
 	Type, Protocol, Source, Destination string
 	Bytes                               int
@@ -37,10 +37,9 @@ type TopTalkerByTraffic struct {
 }
 
 type Parser interface {
-	Parse(in string) ([]TcpDumpLine, error)
+	Parse(in string) ([]TCPDumpLine, error)
 }
 
-// errors
 type ErrCannotParseInput struct {
 	Input string
 }

@@ -9,14 +9,14 @@ import (
 	"time"
 )
 
-type TcpDumpRunner struct {
+type TCPDumpRunner struct {
 	commandPath, timeoutPath string
 	parser                   Parser
 	logg                     Logger
 }
 
-func New(timeoutPath, commandPath string, logg Logger, parser Parser) *TcpDumpRunner {
-	return &TcpDumpRunner{
+func New(timeoutPath, commandPath string, logg Logger, parser Parser) *TCPDumpRunner {
+	return &TCPDumpRunner{
 		timeoutPath: timeoutPath,
 		commandPath: commandPath,
 		parser:      parser,
@@ -24,16 +24,16 @@ func New(timeoutPath, commandPath string, logg Logger, parser Parser) *TcpDumpRu
 	}
 }
 
-func (t *TcpDumpRunner) Run(ctx context.Context, M, N int) chan TopTalkers {
+func (t *TCPDumpRunner) Run(ctx context.Context, m, n int) chan TopTalkers {
 	ch := make(chan TopTalkers)
 	t.logg.Debug("[TcpDumpRunner] started")
 	started := time.Now()
 
 	go func() {
 		defer close(ch)
-		data := make([]TcpDumpLine, 0, M)
+		data := make([]TCPDumpLine, 0, m)
 
-		data, err := t.collect(ctx, M, data)
+		data, err := t.collect(ctx, m, data)
 		if err != nil {
 			t.logg.Error(
 				fmt.Sprintf("[TcpDumpRunner] err: %s", err),
@@ -53,15 +53,15 @@ func (t *TcpDumpRunner) Run(ctx context.Context, M, N int) chan TopTalkers {
 
 		// collect
 		for {
-			dur, err := time.ParseDuration(fmt.Sprintf("%ds", N))
+			dur, err := time.ParseDuration(fmt.Sprintf("%ds", n))
 			if err != nil {
 				t.logg.Error(err.Error())
 				return
 			}
 			started = started.Add(dur)
-			data = t.cleanOldLines(data, N, started)
+			data = t.cleanOldLines(data, started)
 
-			data, err = t.collect(ctx, N, data)
+			data, err = t.collect(ctx, n, data)
 			if err != nil {
 				t.logg.Error(
 					fmt.Sprintf("[TcpDumpRunner] err: %s", err),
@@ -83,7 +83,7 @@ func (t *TcpDumpRunner) Run(ctx context.Context, M, N int) chan TopTalkers {
 	return ch
 }
 
-func (t *TcpDumpRunner) cleanOldLines(data []TcpDumpLine, N int, threshold time.Time) []TcpDumpLine {
+func (t *TCPDumpRunner) cleanOldLines(data []TCPDumpLine, threshold time.Time) []TCPDumpLine {
 	for i, l := range data {
 		if l.Time.Before(threshold) {
 			continue
@@ -92,11 +92,11 @@ func (t *TcpDumpRunner) cleanOldLines(data []TcpDumpLine, N int, threshold time.
 		return data[i:]
 	}
 
-	return make([]TcpDumpLine, 0, len(data))
+	return make([]TCPDumpLine, 0, len(data))
 }
 
-func (t *TcpDumpRunner) collect(ctx context.Context, seconds int, data []TcpDumpLine) ([]TcpDumpLine, error) {
-	cmd := exec.CommandContext(
+func (t *TCPDumpRunner) collect(ctx context.Context, seconds int, data []TCPDumpLine) ([]TCPDumpLine, error) {
+	cmd := exec.CommandContext( //nolint:gosec
 		ctx,
 		t.timeoutPath,
 		"--preserve-status",
@@ -120,12 +120,12 @@ func (t *TcpDumpRunner) collect(ctx context.Context, seconds int, data []TcpDump
 	return append(data, lines...), nil
 }
 
-func (t *TcpDumpRunner) calculate(lines []TcpDumpLine) TopTalkers {
+func (t *TCPDumpRunner) calculate(lines []TCPDumpLine) TopTalkers {
 	byProtocolMap := make(map[string]int) // [protocol]bytes
 
 	byTrafficSecondsMap := make(map[string]map[string]struct{}) // [pseudoId][secondsCount]struct
 	byTrafficBytesMap := make(map[string]int)                   // [pseudoId]totalBytes
-	byTrafficLineMap := make(map[string]TcpDumpLine)            // [pseudoId]line
+	byTrafficLineMap := make(map[string]TCPDumpLine)            // [pseudoId]line
 
 	var totalBytes int
 	for _, l := range lines {

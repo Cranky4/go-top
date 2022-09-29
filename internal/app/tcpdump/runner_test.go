@@ -10,8 +10,8 @@ import (
 
 type TParser struct{}
 
-func (p *TParser) Parse(in string) ([]TcpDumpLine, error) {
-	return []TcpDumpLine{
+func (p *TParser) Parse(in string) ([]TCPDumpLine, error) {
+	return []TCPDumpLine{
 		{
 			Time:        time.Now(),
 			Type:        "IP6",

@@ -2,23 +2,23 @@ package apptop
 
 import "fmt"
 
-type Cpu struct {
-	Avg   CpuAvg
-	State CpuState
+type CPU struct {
+	Avg   CPUAvg
+	State CPUState
 }
 
-type CpuAvg struct {
+type CPUAvg struct {
 	Min     float32 // The first value depicts the average load on the CPU for the last minute.
 	Five    float32 // The second gives us the average load for the last 5-minute interval
 	Fifteen float32 // The third value gives us the 15-minute average load
 }
 
-type CpuState struct {
+type CPUState struct {
 	User, System, Idle float32
 }
 
 type Parser interface {
-	Parse(in string) (Cpu, error)
+	Parse(in string) (CPU, error)
 }
 
 type Logger interface {
@@ -28,7 +28,6 @@ type Logger interface {
 	Error(msg string)
 }
 
-// errors
 type ErrCannotParseInput struct {
 	Input string
 }

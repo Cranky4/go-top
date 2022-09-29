@@ -22,16 +22,16 @@ func New(commandPath string, logg Logger, parser Parser) *NetstatRunner {
 	}
 }
 
-func (t *NetstatRunner) Run(ctx context.Context, M, N int) chan ConnectData {
+func (t *NetstatRunner) Run(ctx context.Context, m, n int) chan ConnectData {
 	ch := make(chan ConnectData)
 	t.logg.Debug("[NetstatRunner] started")
 
 	go func() {
 		defer close(ch)
-		infos := make([][]ConnectInfo, 0, M)
-		states := make([][]ConnectState, 0, M)
+		infos := make([][]ConnectInfo, 0, m)
+		states := make([][]ConnectState, 0, m)
 
-		err := t.collect(ctx, M, &infos, &states)
+		err := t.collect(ctx, m, &infos, &states)
 		if err != nil {
 			t.logg.Error(
 				fmt.Sprintf("[NetstatRunner] err: %s", err),
@@ -50,13 +50,13 @@ func (t *NetstatRunner) Run(ctx context.Context, M, N int) chan ConnectData {
 			return
 		case ch <- connectData:
 			t.logg.Debug("[NetstatRunner] warmed up")
-			infos = infos[N:]
-			states = states[N:]
+			infos = infos[n:]
+			states = states[n:]
 		}
 
 		// collect
 		for {
-			err = t.collect(ctx, N, &infos, &states)
+			err = t.collect(ctx, n, &infos, &states)
 			if err != nil {
 				t.logg.Error(
 					fmt.Sprintf("[NetstatRunner] err: %s", err),
@@ -74,8 +74,8 @@ func (t *NetstatRunner) Run(ctx context.Context, M, N int) chan ConnectData {
 				return
 			case ch <- connectData:
 				t.logg.Debug("[NetstatRunner] collected")
-				infos = infos[N:]
-				states = states[N:]
+				infos = infos[n:]
+				states = states[n:]
 			}
 		}
 	}()
@@ -93,11 +93,7 @@ func (t *NetstatRunner) collect(
 		select {
 		case <-ctx.Done():
 		default:
-			cmd := exec.CommandContext(
-				ctx,
-				t.commandPath,
-				"-lntap",
-			)
+			cmd := exec.CommandContext(ctx, t.commandPath, "-lntap") //nolint:gosec
 
 			var out bytes.Buffer
 			cmd.Stdout = &out

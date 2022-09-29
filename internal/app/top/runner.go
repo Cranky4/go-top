@@ -24,15 +24,15 @@ func New(commandPath string, parser Parser, logg Logger) *TopRunner {
 	}
 }
 
-func (t *TopRunner) Run(ctx context.Context, M, N int) chan Cpu {
-	ch := make(chan Cpu)
+func (t *TopRunner) Run(ctx context.Context, m, n int) chan CPU {
+	ch := make(chan CPU)
 	t.logg.Debug("[TopRunner] started")
 
 	go func() {
 		defer close(ch)
-		cpus := make([]Cpu, 0, M)
+		cpus := make([]CPU, 0, m)
 
-		err := t.collect(ctx, M, &cpus)
+		err := t.collect(ctx, m, &cpus)
 		if err != nil {
 			t.logg.Error(
 				fmt.Sprintf("[TopRunner] err: %s", err),
@@ -48,12 +48,12 @@ func (t *TopRunner) Run(ctx context.Context, M, N int) chan Cpu {
 			return
 		case ch <- avg:
 			t.logg.Debug("[TopRunner] warmed up")
-			cpus = cpus[N:]
+			cpus = cpus[n:]
 		}
 
 		// collect
 		for {
-			err = t.collect(ctx, N, &cpus)
+			err = t.collect(ctx, n, &cpus)
 			if err != nil {
 				t.logg.Error(
 					fmt.Sprintf("[TopRunner] err: %s", err),
@@ -68,7 +68,7 @@ func (t *TopRunner) Run(ctx context.Context, M, N int) chan Cpu {
 				return
 			case ch <- avg:
 				t.logg.Debug("[TopRunner] collected")
-				cpus = cpus[N:]
+				cpus = cpus[n:]
 			}
 		}
 	}()
@@ -76,16 +76,12 @@ func (t *TopRunner) Run(ctx context.Context, M, N int) chan Cpu {
 	return ch
 }
 
-func (t *TopRunner) collect(ctx context.Context, seconds int, cpus *[]Cpu) error {
+func (t *TopRunner) collect(ctx context.Context, seconds int, cpus *[]CPU) error {
 	for i := 0; i < seconds; i++ {
 		select {
 		case <-ctx.Done():
 		default:
-			cmd := exec.CommandContext(
-				ctx,
-				t.commandPath,
-				t.args...,
-			)
+			cmd := exec.CommandContext(ctx, t.commandPath, t.args...) //nolint:gosec
 
 			var out bytes.Buffer
 			cmd.Stdout = &out
@@ -110,7 +106,7 @@ func (t *TopRunner) collect(ctx context.Context, seconds int, cpus *[]Cpu) error
 	return nil
 }
 
-func (t *TopRunner) calculateAvg(cpus []Cpu) Cpu {
+func (t *TopRunner) calculateAvg(cpus []CPU) CPU {
 	var sumAvgMin, sumAvgFive, sumAvgFifteen, sumStateUser, sumStateSystem, sumStateIdle float32
 	for _, c := range cpus {
 		sumAvgMin += c.Avg.Min
@@ -123,13 +119,13 @@ func (t *TopRunner) calculateAvg(cpus []Cpu) Cpu {
 
 	devizor := float32(len(cpus))
 
-	return Cpu{
-		Avg: CpuAvg{
+	return CPU{
+		Avg: CPUAvg{
 			Min:     sumAvgMin / devizor,
 			Five:    sumAvgFive / devizor,
 			Fifteen: sumAvgFifteen / devizor,
 		},
-		State: CpuState{
+		State: CPUState{
 			User:   sumStateUser / devizor,
 			System: sumStateSystem / devizor,
 			Idle:   sumStateIdle / devizor,

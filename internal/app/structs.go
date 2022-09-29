@@ -9,17 +9,17 @@ import (
 )
 
 type Config struct {
-	App     AppConf
+	App     Conf
 	Metrics MetricsConf
 	Logg    LoggerConf
 	Grpc    GrpcConf
 }
 
-type AppConf struct {
-	TopPath, IostatPath, DfPath, TcpDumpPath, TimeoutPath, NetStatPath string
+type Conf struct {
+	TopPath, IostatPath, DfPath, TCPDumpPath, TimeoutPath, NetStatPath string
 }
 type MetricsConf struct {
-	Cpu, Disks, Network, Connections bool
+	CPU, Disks, Network, Connections bool
 }
 
 type LoggerConf struct {
@@ -31,7 +31,7 @@ type GrpcConf struct {
 }
 
 type Snapshot struct {
-	Cpu                  apptop.Cpu
+	CPU                  apptop.CPU
 	DisksIO              []appiostat.DiskIO
 	DisksInfo            []appdf.DiskInfo
 	TopTalkersByProtocol []apptcpdump.TopTalkerByProtocol

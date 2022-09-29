@@ -38,7 +38,6 @@ type ConnectState struct {
 	State    string // listen
 }
 
-// errors
 type ErrCannotParseInput struct {
 	Input string
 }
