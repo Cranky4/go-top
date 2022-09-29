@@ -1,5 +1,10 @@
 name: Otus homework tests
 
+on:
+  push:
+    branches:
+      - '*'
+
 env:
   GO111MODULE: "on"
 
