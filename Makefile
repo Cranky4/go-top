@@ -1,6 +1,7 @@
 GIT_HASH := $(shell git log --format="%h" -n 1)
 LDFLAGS := -X main.release="develop" -X main.buildDate=$(shell date -u +%Y-%m-%dT%H:%M:%S) -X main.gitHash=$(GIT_HASH)
 BIN := "./bin/top"
+CLIENT_BIN := "./bin/client"
 
 # Linter
 install-lint-deps:
@@ -12,20 +13,30 @@ lint: install-lint-deps
 test:
 	go test ./... -race -count 100
 
+# All
+build: build-top build-client
+
 # Top
-build:
+build-top:
 	CGO_ENABLED=0 GOOS=linux go build -v -o $(BIN) -ldflags "$(LDFLAGS)" ./cmd/top
 
-run: build
-	$(BIN) -config ./configs/app.toml
+run-top: build-top
+	$(BIN) -config ./configs/app.toml --grpc-addr=:9990
+
+# Client
+build-client:
+	CGO_ENABLED=0 GOOS=linux go build -v -o $(CLIENT_BIN) -ldflags "$(LDFLAGS)" ./cmd/client
+run-client: build-client
+	$(CLIENT_BIN) -config ./configs/client.toml -n 5 -m 15 --grpc-addr=:9990
 
 # Dev
 up-dev: build
 	docker-compose -f ./deployments/docker-compose.dev.yaml up -d --build
 down-dev:
 	docker-compose -f ./deployments/docker-compose.dev.yaml down --remove-orphans
-dev-run:
-	docker-compose -f ./deployments/docker-compose.dev.yaml run ubunty-testing bash
+logs-dev:
+	docker-compose -f deployments/docker-compose.dev.yaml logs -f client
+rest-dev: down-dev up-dev logs-dev
 
 # GRPC
 install-protobuf:

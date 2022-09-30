@@ -14,4 +14,4 @@ COPY ./configs/app.toml ${CONFIG_FILE}
 
 RUN mkdir logs
 
-CMD ${BIN_FILE} -config ${CONFIG_FILE} --grpc-addr=${GRPC_ADDR} > /opt/app/logs/app.log
+CMD ${BIN_FILE} -config ${CONFIG_FILE} --grpc-addr=${GRPC_ADDR}

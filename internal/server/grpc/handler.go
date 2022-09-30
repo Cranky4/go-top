@@ -2,11 +2,20 @@ package internalgrpc
 
 import (
 	"context"
+	"fmt"
 	"log"
 
 	pb "github.com/Cranky4/go-top/api/TopService"
 	"github.com/Cranky4/go-top/internal/app"
 )
+
+type ErrInvalidParameters struct {
+	M, N uint32
+}
+
+func (e *ErrInvalidParameters) Error() string {
+	return fmt.Sprintf("Invalid parameters m=%v, n=%v", e.M, e.N)
+}
 
 type Handler = pb.TopServiceServer
 
@@ -22,8 +31,17 @@ func NewHandler(ctx context.Context, app *app.App, logger *log.Logger) (Handler,
 
 func (h *handler) StreamSnapshots(r *pb.SnapshotRequest, srv pb.TopService_StreamSnapshotsServer) error {
 	h.logg.Printf("Client connected with params: m=%d, n=%d", r.M, r.N)
+
+	if r.M < 1 || r.N < 1 {
+		return &ErrInvalidParameters{M: r.M, N: r.N}
+	}
+
 	ch := h.app.Start(int(r.M), int(r.N))
 
+	return h.serveChannel(srv, ch)
+}
+
+func (h *handler) serveChannel(srv pb.TopService_StreamSnapshotsServer, ch <-chan app.Snapshot) error {
 	for {
 		select {
 		case <-srv.Context().Done():
