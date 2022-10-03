@@ -37,6 +37,6 @@ func TestParse(t *testing.T) {
 			"nvme0n1          72.84    33    329.34      2369.18    594383.7  244  42758633\n"
 
 		out := parser.Parse(in)
-		require.Nil(t, out)
+		require.Empty(t, out)
 	})
 }

@@ -14,7 +14,7 @@ type IostatParser struct {
 func NewParser(logg Logger) *IostatParser {
 	return &IostatParser{
 		dataReg: regexp.MustCompile(
-			`^(.*?)\s+([\d\.]+)\s+([\d\.]+)\s+([\d\.]+)\s+([\d\.]+)\s+([\d\.]+)$`,
+			`^([^\s]+)\s+([\d\.]+)\s+([\d\.]+)\s+([\d\.]+)\s+([\d\.]+)\s+([\d\.]+)$`,
 		),
 		logg: logg,
 	}

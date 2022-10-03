@@ -3,11 +3,13 @@ package appnetstat
 import (
 	"testing"
 
+	"github.com/Cranky4/go-top/internal/logger"
 	"github.com/stretchr/testify/require"
 )
 
 func TestParse(t *testing.T) {
-	parser := NewParser(nil)
+	logg := logger.New("error", 0)
+	parser := NewParser(logg)
 
 	t.Run("succeeded parsed", func(t *testing.T) {
 		in := "Active Internet connections (servers and established)\n" +
@@ -53,6 +55,6 @@ func TestParse(t *testing.T) {
 			"nvme0n1          72.84    33    329.34      2369.18    594383.7  244  42758633\n"
 
 		out := parser.Parse(in)
-		require.Nil(t, out)
+		require.Empty(t, out)
 	})
 }
