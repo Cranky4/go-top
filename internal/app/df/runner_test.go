@@ -9,7 +9,7 @@ import (
 
 type TParser struct{}
 
-func (p *TParser) ParseBytes(in string) ([]DiskInfo, error) {
+func (p *TParser) ParseBytes(in string) []DiskInfo {
 	return []DiskInfo{
 		{
 			Name:           "/dev/nvme0n1p8",
@@ -17,10 +17,10 @@ func (p *TParser) ParseBytes(in string) ([]DiskInfo, error) {
 			UsedBytes:      48946056,
 			UsageBytes:     82,
 		},
-	}, nil
+	}
 }
 
-func (p *TParser) ParseInodes(in string) ([]DiskInfo, error) {
+func (p *TParser) ParseInodes(in string) []DiskInfo {
 	return []DiskInfo{
 		{
 			Name:            "/dev/nvme0n1p8",
@@ -28,7 +28,7 @@ func (p *TParser) ParseInodes(in string) ([]DiskInfo, error) {
 			UsedInodes:      0,
 			UsageInodes:     0,
 		},
-	}, nil
+	}
 }
 
 type TLogger struct {

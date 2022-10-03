@@ -37,7 +37,7 @@ type TopTalkerByTraffic struct {
 }
 
 type Parser interface {
-	Parse(in string) ([]TCPDumpLine, error)
+	Parse(in string) []TCPDumpLine
 }
 
 type ErrCannotParseInput struct {

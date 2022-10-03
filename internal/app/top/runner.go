@@ -24,15 +24,15 @@ func New(commandPath string, parser Parser, logg Logger) *TopRunner {
 	}
 }
 
-func (t *TopRunner) Run(ctx context.Context, m, n int) chan CPU {
+func (t *TopRunner) Run(ctx context.Context, warmingUpTime, snapshotPeriod int) chan CPU {
 	ch := make(chan CPU)
 	t.logg.Debug("[TopRunner] started")
 
 	go func() {
 		defer close(ch)
-		cpus := make([]CPU, 0, m)
+		cpus := make([]CPU, 0, warmingUpTime)
 
-		err := t.collect(ctx, m, &cpus)
+		err := t.collect(ctx, warmingUpTime, &cpus)
 		if err != nil {
 			t.logg.Error(
 				fmt.Sprintf("[TopRunner] err: %s", err),
@@ -48,12 +48,12 @@ func (t *TopRunner) Run(ctx context.Context, m, n int) chan CPU {
 			return
 		case ch <- avg:
 			t.logg.Debug("[TopRunner] warmed up")
-			cpus = cpus[n:]
+			cpus = cpus[snapshotPeriod:]
 		}
 
 		// collect
 		for {
-			err = t.collect(ctx, n, &cpus)
+			err = t.collect(ctx, snapshotPeriod, &cpus)
 			if err != nil {
 				t.logg.Error(
 					fmt.Sprintf("[TopRunner] err: %s", err),
@@ -68,7 +68,7 @@ func (t *TopRunner) Run(ctx context.Context, m, n int) chan CPU {
 				return
 			case ch <- avg:
 				t.logg.Debug("[TopRunner] collected")
-				cpus = cpus[n:]
+				cpus = cpus[snapshotPeriod:]
 			}
 		}
 	}()
@@ -90,10 +90,7 @@ func (t *TopRunner) collect(ctx context.Context, seconds int, cpus *[]CPU) error
 				return err
 			}
 
-			cpu, err := t.parser.Parse(out.String())
-			if err != nil {
-				return err
-			}
+			cpu := t.parser.Parse(out.String())
 
 			*cpus = append(*cpus, cpu)
 

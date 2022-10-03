@@ -14,7 +14,7 @@ type Config struct {
 }
 
 type ClientConf struct {
-	M, N int
+	WarmingUpTime, SnapshotPeriod int
 }
 
 type LoggerConf struct {

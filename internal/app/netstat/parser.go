@@ -20,7 +20,7 @@ func NewParser(logg Logger) Parser {
 	}
 }
 
-func (t *NetStatParser) Parse(in string) ([]NetStatRow, error) {
+func (t *NetStatParser) Parse(in string) []NetStatRow {
 	rows := strings.Split(in, "\n")
 	connects := make([]NetStatRow, 0, len(rows)-1)
 
@@ -32,18 +32,22 @@ func (t *NetStatParser) Parse(in string) ([]NetStatRow, error) {
 		parts := t.dataReg.FindStringSubmatch(rows[i])
 
 		if len(parts) == 0 {
-			return nil, &ErrCannotParseInput{Input: rows[i]}
+			err := &ErrCannotParseInput{Input: rows[i]}
+			t.logg.Warn(err.Error())
+			continue
 		}
 
 		proto := parts[1]
 
 		reqvQ, err := strconv.Atoi(parts[2])
 		if err != nil {
-			return nil, err
+			t.logg.Warn(err.Error())
+			continue
 		}
 		sendQ, err := strconv.Atoi(parts[3])
 		if err != nil {
-			return nil, err
+			t.logg.Warn(err.Error())
+			continue
 		}
 
 		locAddr := parts[4]
@@ -53,7 +57,8 @@ func (t *NetStatParser) Parse(in string) ([]NetStatRow, error) {
 		if locAddrParts[len(locAddrParts)-1] != "*" {
 			locPort, err = strconv.Atoi(locAddrParts[len(locAddrParts)-1])
 			if err != nil {
-				return nil, err
+				t.logg.Warn(err.Error())
+				continue
 			}
 		}
 
@@ -64,7 +69,8 @@ func (t *NetStatParser) Parse(in string) ([]NetStatRow, error) {
 		if forAddrParts[len(forAddrParts)-1] != "*" {
 			forPort, err = strconv.Atoi(forAddrParts[len(forAddrParts)-1])
 			if err != nil {
-				return nil, err
+				t.logg.Warn(err.Error())
+				continue
 			}
 		}
 
@@ -77,7 +83,8 @@ func (t *NetStatParser) Parse(in string) ([]NetStatRow, error) {
 		if pidCmdParts[0] != "-" {
 			PID, err = strconv.Atoi(pidCmdParts[0])
 			if err != nil {
-				return nil, err
+				t.logg.Warn(err.Error())
+				continue
 			}
 			program = pidCmdParts[1]
 		}
@@ -96,5 +103,5 @@ func (t *NetStatParser) Parse(in string) ([]NetStatRow, error) {
 		})
 	}
 
-	return connects, nil
+	return connects
 }

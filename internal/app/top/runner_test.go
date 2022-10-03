@@ -9,7 +9,7 @@ import (
 
 type TParser struct{}
 
-func (p *TParser) Parse(in string) (CPU, error) {
+func (p *TParser) Parse(in string) CPU {
 	return CPU{
 		Avg: CPUAvg{
 			Min:     float32(0.23),
@@ -21,7 +21,7 @@ func (p *TParser) Parse(in string) (CPU, error) {
 			System: float32(0.12),
 			Idle:   float32(0.86),
 		},
-	}, nil
+	}
 }
 
 type TLogger struct {

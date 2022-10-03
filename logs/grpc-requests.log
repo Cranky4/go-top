@@ -1,2 +1,5 @@
-2022/09/30 10:48:04 handler.go:33: Client connected with params: m=15, n=5
-2022/09/30 10:49:32 handler.go:48: Client disconnected
+2022/10/03 13:57:37 handler.go:35: Client connected with params: m=15, n=5
+2022/10/03 13:57:50 handler.go:35: Client connected with params: m=15, n=5
+2022/10/03 13:57:52 handler.go:35: Client connected with params: m=15, n=5
+2022/10/03 13:58:40 handler.go:52: Client disconnected 192.168.192.1:44984
+2022/10/03 13:58:41 handler.go:52: Client disconnected 192.168.192.1:44982

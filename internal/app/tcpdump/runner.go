@@ -24,16 +24,16 @@ func New(timeoutPath, commandPath string, logg Logger, parser Parser) *TCPDumpRu
 	}
 }
 
-func (t *TCPDumpRunner) Run(ctx context.Context, m, n int) chan TopTalkers {
+func (t *TCPDumpRunner) Run(ctx context.Context, warmingUpTime, snapshotPeriod int) chan TopTalkers {
 	ch := make(chan TopTalkers)
 	t.logg.Debug("[TcpDumpRunner] started")
 	started := time.Now()
 
 	go func() {
 		defer close(ch)
-		data := make([]TCPDumpLine, 0, m)
+		data := make([]TCPDumpLine, 0, warmingUpTime)
 
-		data, err := t.collect(ctx, m, data)
+		data, err := t.collect(ctx, warmingUpTime, data)
 		if err != nil {
 			t.logg.Error(
 				fmt.Sprintf("[TcpDumpRunner] err: %s", err),
@@ -53,7 +53,7 @@ func (t *TCPDumpRunner) Run(ctx context.Context, m, n int) chan TopTalkers {
 
 		// collect
 		for {
-			dur, err := time.ParseDuration(fmt.Sprintf("%ds", n))
+			dur, err := time.ParseDuration(fmt.Sprintf("%ds", snapshotPeriod))
 			if err != nil {
 				t.logg.Error(err.Error())
 				return
@@ -61,7 +61,7 @@ func (t *TCPDumpRunner) Run(ctx context.Context, m, n int) chan TopTalkers {
 			started = started.Add(dur)
 			data = t.cleanOldLines(data, started)
 
-			data, err = t.collect(ctx, n, data)
+			data, err = t.collect(ctx, snapshotPeriod, data)
 			if err != nil {
 				t.logg.Error(
 					fmt.Sprintf("[TcpDumpRunner] err: %s", err),
@@ -112,10 +112,7 @@ func (t *TCPDumpRunner) collect(ctx context.Context, seconds int, data []TCPDump
 		return nil, err
 	}
 
-	lines, err := t.parser.Parse(out.String())
-	if err != nil {
-		return nil, err
-	}
+	lines := t.parser.Parse(out.String())
 
 	return append(data, lines...), nil
 }

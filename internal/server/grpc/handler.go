@@ -7,45 +7,50 @@ import (
 
 	pb "github.com/Cranky4/go-top/api/TopService"
 	"github.com/Cranky4/go-top/internal/app"
+	"google.golang.org/grpc/peer"
 )
 
 type ErrInvalidParameters struct {
-	M, N uint32
+	WarmingUpTime, SnapshotPeriod uint32
 }
 
 func (e *ErrInvalidParameters) Error() string {
-	return fmt.Sprintf("Invalid parameters m=%v, n=%v", e.M, e.N)
+	return fmt.Sprintf("Invalid parameters m=%v, n=%v", e.WarmingUpTime, e.SnapshotPeriod)
 }
 
 type Handler = pb.TopServiceServer
 
 type handler struct {
 	pb.UnimplementedTopServiceServer
-	app  *app.App
-	logg *log.Logger
+	app      *app.App
+	logg     app.Logger
+	grpcLogg *log.Logger
 }
 
-func NewHandler(ctx context.Context, app *app.App, logger *log.Logger) (Handler, error) {
-	return &handler{app: app, logg: logger}, nil
+func NewHandler(ctx context.Context, app *app.App, logger app.Logger, grpcLogger *log.Logger) (Handler, error) {
+	return &handler{app: app, logg: logger, grpcLogg: grpcLogger}, nil
 }
 
 func (h *handler) StreamSnapshots(r *pb.SnapshotRequest, srv pb.TopService_StreamSnapshotsServer) error {
-	h.logg.Printf("Client connected with params: m=%d, n=%d", r.M, r.N)
+	h.grpcLogg.Printf("Client connected with params: m=%d, n=%d", r.WarmingUpTime, r.SnapshotPeriod)
 
-	if r.M < 1 || r.N < 1 {
-		return &ErrInvalidParameters{M: r.M, N: r.N}
+	if r.WarmingUpTime < 1 || r.SnapshotPeriod < 1 {
+		return &ErrInvalidParameters{WarmingUpTime: r.WarmingUpTime, SnapshotPeriod: r.SnapshotPeriod}
 	}
 
-	ch := h.app.Start(int(r.M), int(r.N))
+	ch := h.app.Start(int(r.WarmingUpTime), int(r.SnapshotPeriod))
 
 	return h.serveChannel(srv, ch)
 }
 
 func (h *handler) serveChannel(srv pb.TopService_StreamSnapshotsServer, ch <-chan app.Snapshot) error {
+	p, _ := peer.FromContext(srv.Context())
+
 	for {
 		select {
 		case <-srv.Context().Done():
-			h.logg.Printf("Client disconnected")
+			h.grpcLogg.Printf("Client disconnected " + p.Addr.String())
+			h.logg.Info("Client disconnected " + p.Addr.String())
 			return nil
 		case s, opened := <-ch:
 			if !opened {
@@ -132,7 +137,11 @@ func (h *handler) serveChannel(srv pb.TopService_StreamSnapshotsServer, ch <-cha
 				TopTalkersByTraffic:  topTalkersByTraffic,
 			}
 
-			if err := srv.Send(&snapshot); err != nil {
+			err := srv.Send(&snapshot)
+
+			h.logg.Info("Snapshot was sent to client - " + p.Addr.String())
+
+			if err != nil {
 				return err
 			}
 		}

@@ -6,8 +6,8 @@ option go_package="./TopService";
 
 // Необходимо каждые **N** секунд выдавать информацию, усредненную за последние **M** секунд.
 message SnapshotRequest {
-    uint32 N = 1;
-    uint32 M = 2;
+    uint32 SnapshotPeriod = 1;
+    uint32 WarmingUpTime = 2;
 }
 
 service TopService {

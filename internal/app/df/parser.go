@@ -14,13 +14,13 @@ type DfParser struct {
 func NewParser(logg Logger) *DfParser {
 	return &DfParser{
 		dataReg: regexp.MustCompile(
-			`^([\w\/]+)\s+([\d]+)\s+([\d]+)\s+([\d]+)\s+([\d\-]+)%?\s+([\w\/]+)$`,
+			`^(.*?)\s+([\d]+)\s+([\d]+)\s+([\d]+)\s+([\d\-]+)%?\s+(.*?)$`,
 		),
 		logg: logg,
 	}
 }
 
-func (t *DfParser) ParseBytes(in string) ([]DiskInfo, error) {
+func (t *DfParser) ParseBytes(in string) []DiskInfo {
 	rows := strings.Split(in, "\n")
 	discs := make([]DiskInfo, 0, len(rows)-1)
 
@@ -32,26 +32,31 @@ func (t *DfParser) ParseBytes(in string) ([]DiskInfo, error) {
 		parts := t.dataReg.FindStringSubmatch(rows[i])
 
 		if len(parts) == 0 {
-			return nil, &ErrCannotParseInput{Input: rows[i]}
+			err := &ErrCannotParseInput{Input: rows[i]}
+			t.logg.Warn(err.Error())
+			continue
 		}
 
 		device := parts[1]
 
 		used, err := strconv.Atoi(parts[3])
 		if err != nil {
-			return nil, err
+			t.logg.Error(err.Error())
+			continue
 		}
 
 		available, err := strconv.Atoi(parts[4])
 		if err != nil {
-			return nil, err
+			t.logg.Error(err.Error())
+			continue
 		}
 
 		var usage int
 		if parts[5] != "-" {
 			usage, err = strconv.Atoi(parts[5])
 			if err != nil {
-				return nil, err
+				t.logg.Error(err.Error())
+				continue
 			}
 		}
 
@@ -63,10 +68,10 @@ func (t *DfParser) ParseBytes(in string) ([]DiskInfo, error) {
 		})
 	}
 
-	return discs, nil
+	return discs
 }
 
-func (t *DfParser) ParseInodes(in string) ([]DiskInfo, error) {
+func (t *DfParser) ParseInodes(in string) []DiskInfo {
 	rows := strings.Split(in, "\n")
 	discs := make([]DiskInfo, 0, len(rows)-1)
 
@@ -84,19 +89,22 @@ func (t *DfParser) ParseInodes(in string) ([]DiskInfo, error) {
 
 		available, err := strconv.Atoi(parts[2])
 		if err != nil {
-			return nil, err
+			t.logg.Error(err.Error())
+			continue
 		}
 
 		used, err := strconv.Atoi(parts[3])
 		if err != nil {
-			return nil, err
+			t.logg.Error(err.Error())
+			continue
 		}
 
 		var usage int
 		if parts[5] != "-" {
 			usage, err = strconv.Atoi(parts[5])
 			if err != nil {
-				return nil, err
+				t.logg.Error(err.Error())
+				continue
 			}
 		}
 
@@ -108,5 +116,5 @@ func (t *DfParser) ParseInodes(in string) ([]DiskInfo, error) {
 		})
 	}
 
-	return discs, nil
+	return discs
 }

@@ -2,7 +2,6 @@ package app
 
 import (
 	"context"
-	"errors"
 	"fmt"
 
 	appdf "github.com/Cranky4/go-top/internal/app/df"
@@ -31,14 +30,14 @@ func (t *App) Start(warmUpTime, recordPeriod int) <-chan Snapshot {
 	return ch
 }
 
-func (t *App) prepareDataChannels(m, n int, ch chan Snapshot) {
+func (t *App) prepareDataChannels(warmUpTime, period int, ch chan Snapshot) {
 	defer close(ch)
 	t.logg.Debug("[APP] started... Hello!")
 
 	var cpuCh chan apptop.CPU
 	if t.conf.Metrics.CPU {
-		topRunner := apptop.New(t.conf.App.TopPath, apptop.NewParser(), t.logg)
-		cpuCh = topRunner.Run(t.ctx, m, n)
+		topRunner := apptop.New(t.conf.App.TopPath, apptop.NewParser(t.logg), t.logg)
+		cpuCh = topRunner.Run(t.ctx, warmUpTime, period)
 	} else {
 		t.logg.Debug("[APP] CPU metric is disabled")
 	}
@@ -46,11 +45,11 @@ func (t *App) prepareDataChannels(m, n int, ch chan Snapshot) {
 	var disksIOCh chan []appiostat.DiskIO
 	var disksStatCh chan []appdf.DiskInfo
 	if t.conf.Metrics.Disks {
-		iostatRunner := appiostat.New(t.conf.App.IostatPath, t.logg, appiostat.NewParser())
-		disksIOCh = iostatRunner.Run(t.ctx, m, n)
+		iostatRunner := appiostat.New(t.conf.App.IostatPath, t.logg, appiostat.NewParser(t.logg))
+		disksIOCh = iostatRunner.Run(t.ctx, warmUpTime, period)
 
 		dfRunner := appdf.New(t.conf.App.DfPath, t.logg, appdf.NewParser(t.logg))
-		disksStatCh = dfRunner.Run(t.ctx, m, n)
+		disksStatCh = dfRunner.Run(t.ctx, warmUpTime, period)
 	} else {
 		t.logg.Debug("[APP] discs metric is disabled")
 	}
@@ -63,7 +62,7 @@ func (t *App) prepareDataChannels(m, n int, ch chan Snapshot) {
 			t.logg,
 			apptcpdump.NewParser(t.logg),
 		)
-		talkersCh = tcpDumpRunner.Run(t.ctx, m, n)
+		talkersCh = tcpDumpRunner.Run(t.ctx, warmUpTime, period)
 	} else {
 		t.logg.Debug("[APP] network metric is disabled")
 	}
@@ -75,7 +74,7 @@ func (t *App) prepareDataChannels(m, n int, ch chan Snapshot) {
 			t.logg,
 			appnetstat.NewParser(t.logg),
 		)
-		connsCh = netStatRunner.Run(t.ctx, m, n)
+		connsCh = netStatRunner.Run(t.ctx, warmUpTime, period)
 	} else {
 		t.logg.Debug("[APP] connection metrics disabled")
 	}
@@ -86,13 +85,7 @@ L:
 		case <-t.ctx.Done():
 			break L
 		default:
-			snapshot, err := t.proxySnaphot(cpuCh, disksIOCh, disksStatCh, talkersCh, connsCh)
-			if err != nil {
-				t.logg.Error(err.Error())
-				break L
-			}
-
-			ch <- snapshot
+			ch <- t.proxySnaphot(cpuCh, disksIOCh, disksStatCh, talkersCh, connsCh)
 		}
 	}
 
@@ -105,15 +98,16 @@ func (t *App) proxySnaphot(
 	disksStatCh chan []appdf.DiskInfo,
 	talkersCh chan apptcpdump.TopTalkers,
 	connsCh chan appnetstat.ConnectData,
-) (Snapshot, error) {
+) Snapshot {
 	var cpu apptop.CPU
 	var cpuOpened bool
+
 	if t.conf.Metrics.CPU {
 		t.logg.Debug("[APP] waiting cpu")
 		cpu, cpuOpened = <-cpuCh
 
 		if !cpuOpened {
-			return Snapshot{}, errors.New("[APP] cpu channel is closed")
+			t.logg.Warn("[APP] cpu channel is closed")
 		}
 	}
 
@@ -127,14 +121,14 @@ func (t *App) proxySnaphot(
 		disksIO, disksIOOpened = <-disksIOCh
 
 		if !disksIOOpened {
-			return Snapshot{}, errors.New("[APP] disks io is closed")
+			t.logg.Warn("[APP] disks io is closed")
 		}
 
 		t.logg.Debug("[APP] waiting disks stats")
 		disksInfo, disksInfoOpened = <-disksStatCh
 
 		if !disksInfoOpened {
-			return Snapshot{}, errors.New("[APP] disks info is closed")
+			t.logg.Warn("[APP] disks info is closed")
 		}
 	}
 
@@ -145,7 +139,7 @@ func (t *App) proxySnaphot(
 		talkers, talkersChOpened = <-talkersCh
 
 		if !talkersChOpened {
-			return Snapshot{}, errors.New("[APP] network talkers channel is closed")
+			t.logg.Warn("[APP] network talkers channel is closed")
 		}
 	}
 
@@ -156,7 +150,7 @@ func (t *App) proxySnaphot(
 		conns, connsChOpened = <-connsCh
 
 		if !connsChOpened {
-			return Snapshot{}, errors.New("[APP] connections channel is closed")
+			t.logg.Warn("[APP] connections channel is closed")
 		}
 	}
 
@@ -168,5 +162,5 @@ func (t *App) proxySnaphot(
 		ConnectsStates:       conns.States,
 		TopTalkersByProtocol: talkers.ByProtocol,
 		TopTalkersByTraffic:  talkers.ByTraffic,
-	}, nil
+	}
 }

@@ -22,15 +22,15 @@ func New(commandPath string, logg Logger, parser Parser) *IostatRunner {
 	}
 }
 
-func (t *IostatRunner) Run(ctx context.Context, m, n int) chan []DiskInfo {
+func (t *IostatRunner) Run(ctx context.Context, warmingUpTime, shapshotPeriod int) chan []DiskInfo {
 	ch := make(chan []DiskInfo)
 	t.logg.Debug("[DfRunner] started")
 
 	go func() {
 		defer close(ch)
-		data := make([][]DiskInfo, 0, m)
+		data := make([][]DiskInfo, 0, warmingUpTime)
 
-		err := t.collect(ctx, m, &data)
+		err := t.collect(ctx, warmingUpTime, &data)
 		if err != nil {
 			t.logg.Error(
 				fmt.Sprintf("[DfRunner] err: %s", err),
@@ -46,12 +46,12 @@ func (t *IostatRunner) Run(ctx context.Context, m, n int) chan []DiskInfo {
 			return
 		case ch <- avg:
 			t.logg.Debug("[DfRunner] warmed up")
-			data = data[n:]
+			data = data[shapshotPeriod:]
 		}
 
 		// collect
 		for {
-			err = t.collect(ctx, n, &data)
+			err = t.collect(ctx, shapshotPeriod, &data)
 			if err != nil {
 				t.logg.Error(
 					fmt.Sprintf("[DfRunner] err: %s", err),
@@ -66,7 +66,7 @@ func (t *IostatRunner) Run(ctx context.Context, m, n int) chan []DiskInfo {
 				return
 			case ch <- avg:
 				t.logg.Debug("[DfRunner] collected")
-				data = data[n:]
+				data = data[shapshotPeriod:]
 			}
 		}
 	}()
@@ -89,10 +89,7 @@ func (t *IostatRunner) collect(ctx context.Context, seconds int, disks *[][]Disk
 				return err
 			}
 
-			diskBytes, err := t.parser.ParseBytes(out.String())
-			if err != nil {
-				return err
-			}
+			diskBytes := t.parser.ParseBytes(out.String())
 
 			// df -i
 			cmd = exec.CommandContext(ctx, t.commandPath, "-i") //nolint:gosec
@@ -102,10 +99,7 @@ func (t *IostatRunner) collect(ctx context.Context, seconds int, disks *[][]Disk
 				return err
 			}
 
-			diskInodes, err := t.parser.ParseInodes(out.String())
-			if err != nil {
-				return err
-			}
+			diskInodes := t.parser.ParseInodes(out.String())
 
 			// merge output
 			merged := t.merge(diskBytes, diskInodes)

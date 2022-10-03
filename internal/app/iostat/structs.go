@@ -21,7 +21,7 @@ type Logger interface {
 }
 
 type Parser interface {
-	Parse(in string) ([]IostatRow, error)
+	Parse(in string) []IostatRow
 }
 
 type ErrCannotParseInput struct {

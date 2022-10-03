@@ -20,8 +20,8 @@ type DiskInfo struct {
 }
 
 type Parser interface {
-	ParseBytes(in string) ([]DiskInfo, error)
-	ParseInodes(in string) ([]DiskInfo, error)
+	ParseBytes(in string) []DiskInfo
+	ParseInodes(in string) []DiskInfo
 }
 
 type ErrCannotParseInput struct {

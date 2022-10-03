@@ -10,7 +10,7 @@ type Logger interface {
 }
 
 type Parser interface {
-	Parse(in string) ([]NetStatRow, error)
+	Parse(in string) []NetStatRow
 }
 
 type NetStatRow struct {

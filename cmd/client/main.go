@@ -13,14 +13,14 @@ import (
 )
 
 var (
-	grpcAddr, configFile string
-	m, n                 int
+	grpcAddr, configFile          string
+	warmingUpTime, snapshotPeriod int
 )
 
 func init() {
 	flag.StringVar(&grpcAddr, "grpc-addr", ":9990", "GRPC server port")
-	flag.IntVar(&m, "m", 15, "Snapshot period seconds")
-	flag.IntVar(&n, "n", 5, "Snapshot offset seconds")
+	flag.IntVar(&warmingUpTime, "m", 15, "Snapshot warming up time (seconds)")
+	flag.IntVar(&snapshotPeriod, "n", 5, "Snapshot period (seconds)")
 	flag.StringVar(&configFile, "config", "./config/client.toml", "Path to config file")
 }
 
@@ -37,8 +37,8 @@ func main() {
 
 	config := NewConfig(configFile)
 	config.Grpc.Addr = grpcAddr
-	config.Client.M = m
-	config.Client.N = n
+	config.Client.WarmingUpTime = warmingUpTime
+	config.Client.SnapshotPeriod = snapshotPeriod
 
 	logg := logger.New(config.Logg.Level, log.LstdFlags)
 	client := topclient.New(ctx, config, *logg)
@@ -53,4 +53,6 @@ func main() {
 	logg.Info("client is running...")
 
 	<-ctx.Done()
+
+	logg.Info("client is stopped...")
 }

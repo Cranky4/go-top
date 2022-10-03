@@ -9,7 +9,7 @@ import (
 
 type TParser struct{}
 
-func (p *TParser) Parse(in string) ([]IostatRow, error) {
+func (p *TParser) Parse(in string) []IostatRow {
 	return []IostatRow{
 		{
 			Device:    "nvme0n1",
@@ -19,7 +19,7 @@ func (p *TParser) Parse(in string) ([]IostatRow, error) {
 			KbRead:    5943837,
 			KbWrite:   42758633,
 		},
-	}, nil
+	}
 }
 
 type TLogger struct {

@@ -21,7 +21,7 @@ func NewParser(logg Logger) *TCPDumpParser {
 	}
 }
 
-func (t *TCPDumpParser) Parse(in string) ([]TCPDumpLine, error) {
+func (t *TCPDumpParser) Parse(in string) []TCPDumpLine {
 	rows := strings.Split(in, "\n")
 	result := make([]TCPDumpLine, 0, len(rows))
 
@@ -40,7 +40,8 @@ func (t *TCPDumpParser) Parse(in string) ([]TCPDumpLine, error) {
 
 		time, err := time.Parse("2006-01-02 15:04:05.999999999", parts[1])
 		if err != nil {
-			return nil, err
+			t.logg.Warn(err.Error())
+			continue
 		}
 
 		typ := parts[2]
@@ -50,7 +51,8 @@ func (t *TCPDumpParser) Parse(in string) ([]TCPDumpLine, error) {
 
 		bytes, err := strconv.Atoi(parts[6])
 		if err != nil {
-			return nil, err
+			t.logg.Warn(err.Error())
+			continue
 		}
 
 		result = append(result, TCPDumpLine{
@@ -63,5 +65,5 @@ func (t *TCPDumpParser) Parse(in string) ([]TCPDumpLine, error) {
 		})
 	}
 
-	return result, nil
+	return result
 }

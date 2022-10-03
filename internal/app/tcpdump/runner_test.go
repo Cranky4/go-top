@@ -10,7 +10,7 @@ import (
 
 type TParser struct{}
 
-func (p *TParser) Parse(in string) ([]TCPDumpLine, error) {
+func (p *TParser) Parse(in string) []TCPDumpLine {
 	return []TCPDumpLine{
 		{
 			Time:        time.Now(),
@@ -20,7 +20,7 @@ func (p *TParser) Parse(in string) ([]TCPDumpLine, error) {
 			Protocol:    "UDP",
 			Bytes:       118,
 		},
-	}, nil
+	}
 }
 
 type TLogger struct {

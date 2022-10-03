@@ -40,8 +40,8 @@ func (c *TopClient) Start() error {
 	client := pb.NewTopServiceClient(conn)
 
 	stream, err := client.StreamSnapshots(c.ctx, &pb.SnapshotRequest{
-		M: uint32(c.conf.Client.M),
-		N: uint32(c.conf.Client.N),
+		WarmingUpTime:  uint32(c.conf.Client.WarmingUpTime),
+		SnapshotPeriod: uint32(c.conf.Client.SnapshotPeriod),
 	})
 	if err != nil {
 		return err

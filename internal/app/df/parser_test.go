@@ -1,7 +1,6 @@
 package appdf
 
 import (
-	"errors"
 	"testing"
 
 	"github.com/stretchr/testify/require"
@@ -30,9 +29,7 @@ func TestParseInodes(t *testing.T) {
 			},
 		}
 
-		out, err := parser.ParseInodes(in)
-
-		require.Nil(t, err)
+		out := parser.ParseInodes(in)
 		require.Equal(t, ex, out)
 	})
 
@@ -41,11 +38,7 @@ func TestParseInodes(t *testing.T) {
 			"/dev/nvme0n1p8   65339392  48946056  11318152  z% /etc/hosts\n" +
 			"/dev/nvme0n1p10 291902464 112315688 164685892  41% /opt/app/logs\n"
 
-		out, err := parser.ParseBytes(in)
-
-		require.NotNil(t, err)
-		var expErr *ErrCannotParseInput
-		require.True(t, errors.As(err, &expErr))
+		out := parser.ParseBytes(in)
 		require.Nil(t, out)
 	})
 
@@ -69,9 +62,7 @@ func TestParseInodes(t *testing.T) {
 			},
 		}
 
-		out, err := parser.ParseBytes(in)
-
-		require.Nil(t, err)
+		out := parser.ParseBytes(in)
 		require.Equal(t, ex, out)
 	})
 
@@ -80,11 +71,7 @@ func TestParseInodes(t *testing.T) {
 			"/dev/nvme0n1p8   65339392  48946056  11318152  8z2% /etc/hosts\n" +
 			"/dev/nvme0n1p10 291902464 112315688 164685892  41% /opt/app/logs\n"
 
-		out, err := parser.ParseBytes(in)
-
-		require.NotNil(t, err)
-		var expErr *ErrCannotParseInput
-		require.True(t, errors.As(err, &expErr))
+		out := parser.ParseBytes(in)
 		require.Nil(t, out)
 	})
 }

@@ -28,6 +28,7 @@ func New(app *app.App, logg Logger, requestLogFile string) *Server {
 type Logger interface {
 	Debug(msg string)
 	Info(msg string)
+	Warn(msg string)
 	Error(msg string)
 }
 
@@ -46,7 +47,7 @@ func (s *Server) Start(ctx context.Context, addr string) error {
 	}
 	logger := log.New(file, "", log.Ldate|log.Ltime|log.Lshortfile)
 
-	handler, err := NewHandler(ctx, s.app, logger)
+	handler, err := NewHandler(ctx, s.app, s.logg, logger)
 	if err != nil {
 		return err
 	}

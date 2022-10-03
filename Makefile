@@ -35,7 +35,7 @@ up-dev: build
 down-dev:
 	docker-compose -f ./deployments/docker-compose.dev.yaml down --remove-orphans
 logs-dev:
-	docker-compose -f deployments/docker-compose.dev.yaml logs -f client
+	docker-compose -f deployments/docker-compose.dev.yaml logs -f
 rest-dev: down-dev up-dev logs-dev
 
 # GRPC

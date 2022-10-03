@@ -9,7 +9,7 @@ import (
 
 type TParser struct{}
 
-func (p *TParser) Parse(in string) ([]NetStatRow, error) {
+func (p *TParser) Parse(in string) []NetStatRow {
 	return []NetStatRow{
 		{
 			Proto:       "tcp",
@@ -23,7 +23,7 @@ func (p *TParser) Parse(in string) ([]NetStatRow, error) {
 			PID:         88,
 			Programm:    "cmd",
 		},
-	}, nil
+	}
 }
 
 type TLogger struct {

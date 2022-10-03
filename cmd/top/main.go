@@ -17,7 +17,7 @@ var grpcAddr, configFile string
 
 func init() {
 	flag.StringVar(&grpcAddr, "grpc-addr", ":9990", "GRPC server port")
-	flag.StringVar(&configFile, "config", "./config/app.toml", "Path to config file")
+	flag.StringVar(&configFile, "config", "./configs/app.toml", "Path to config file")
 }
 
 func main() {

@@ -8,17 +8,19 @@ import (
 
 type IostatParser struct {
 	dataReg *regexp.Regexp
+	logg    Logger
 }
 
-func NewParser() *IostatParser {
+func NewParser(logg Logger) *IostatParser {
 	return &IostatParser{
 		dataReg: regexp.MustCompile(
-			`^([\w\d]+)\s+([\d\.]+)\s+([\d\.]+)\s+([\d\.]+)\s+([\d\.]+)\s+([\d\.]+)$`,
+			`^(.*?)\s+([\d\.]+)\s+([\d\.]+)\s+([\d\.]+)\s+([\d\.]+)\s+([\d\.]+)$`,
 		),
+		logg: logg,
 	}
 }
 
-func (t *IostatParser) Parse(in string) ([]IostatRow, error) {
+func (t *IostatParser) Parse(in string) []IostatRow {
 	rows := strings.Split(in, "\n")
 	discs := make([]IostatRow, 0, len(rows)-3)
 
@@ -30,34 +32,41 @@ func (t *IostatParser) Parse(in string) ([]IostatRow, error) {
 		parts := t.dataReg.FindStringSubmatch(rows[i])
 
 		if len(parts) == 0 {
-			return nil, &ErrCannotParseInput{Input: rows[i]}
+			err := &ErrCannotParseInput{Input: rows[i]}
+			t.logg.Error(err.Error())
+			continue
 		}
 
 		device := parts[1]
 
 		tps, err := strconv.ParseFloat(parts[2], 32)
 		if err != nil {
-			return nil, err
+			t.logg.Error(err.Error())
+			continue
 		}
 
 		kbpsRead, err := strconv.ParseFloat(parts[3], 32)
 		if err != nil {
-			return nil, err
+			t.logg.Error(err.Error())
+			continue
 		}
 
 		kbpsWrite, err := strconv.ParseFloat(parts[4], 32)
 		if err != nil {
-			return nil, err
+			t.logg.Error(err.Error())
+			continue
 		}
 
 		kbRead, err := strconv.Atoi(parts[5])
 		if err != nil {
-			return nil, err
+			t.logg.Error(err.Error())
+			continue
 		}
 
 		kbWrite, err := strconv.Atoi(parts[6])
 		if err != nil {
-			return nil, err
+			t.logg.Error(err.Error())
+			continue
 		}
 
 		discs = append(discs, IostatRow{
@@ -70,5 +79,5 @@ func (t *IostatParser) Parse(in string) ([]IostatRow, error) {
 		})
 	}
 
-	return discs, nil
+	return discs
 }

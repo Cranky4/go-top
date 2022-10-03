@@ -8,59 +8,71 @@ import (
 
 type TopParser struct {
 	avgLoadReg, statesReg *regexp.Regexp
+	logg                  Logger
 }
 
-func NewParser() *TopParser {
+func NewParser(logg Logger) *TopParser {
 	return &TopParser{
 		avgLoadReg: regexp.MustCompile(`load average: ([\d.]+), ([\d.]+), ([\d.]+)`),
 		statesReg:  regexp.MustCompile(`([\d\.]+)\s+us,.*?([\d\.]+)\s+sy,.*?([\d\.]+)\s+id`),
+		logg:       logg,
 	}
 }
 
-func (t *TopParser) Parse(in string) (CPU, error) {
+func (t *TopParser) Parse(in string) CPU {
 	rows := strings.SplitN(in, "\n", 4)
 	// avg
 	avgParts := t.avgLoadReg.FindStringSubmatch(rows[0])
 
 	if len(avgParts) == 0 {
-		return CPU{}, &ErrCannotParseInput{Input: rows[0]}
+		err := &ErrCannotParseInput{Input: rows[0]}
+		t.logg.Warn(err.Error())
+		return CPU{}
 	}
 
 	min, err := strconv.ParseFloat(avgParts[1], 32)
 	if err != nil {
-		return CPU{}, err
+		t.logg.Error(err.Error())
+		return CPU{}
 	}
 
 	five, err := strconv.ParseFloat(avgParts[2], 32)
 	if err != nil {
-		return CPU{}, err
+		t.logg.Error(err.Error())
+		return CPU{}
 	}
 
 	fifteen, err := strconv.ParseFloat(avgParts[3], 32)
 	if err != nil {
-		return CPU{}, err
+		t.logg.Error(err.Error())
+		return CPU{}
 	}
 
 	// states
 	statesParts := t.statesReg.FindStringSubmatch(rows[2])
 
 	if len(statesParts) == 0 {
-		return CPU{}, &ErrCannotParseInput{Input: rows[2]}
+		err := &ErrCannotParseInput{Input: rows[2]}
+		t.logg.Error(err.Error())
+		return CPU{}
 	}
 
 	us, err := strconv.ParseFloat(statesParts[1], 32)
 	if err != nil {
-		return CPU{}, err
+		t.logg.Error(err.Error())
+		return CPU{}
 	}
 
 	sy, err := strconv.ParseFloat(statesParts[2], 32)
 	if err != nil {
-		return CPU{}, err
+		t.logg.Error(err.Error())
+		return CPU{}
 	}
 
 	id, err := strconv.ParseFloat(statesParts[3], 32)
 	if err != nil {
-		return CPU{}, err
+		t.logg.Error(err.Error())
+		return CPU{}
 	}
 
 	return CPU{
@@ -74,5 +86,5 @@ func (t *TopParser) Parse(in string) (CPU, error) {
 			System: float32(sy),
 			Idle:   float32(id),
 		},
-	}, nil
+	}
 }

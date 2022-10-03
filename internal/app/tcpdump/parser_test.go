@@ -49,9 +49,7 @@ func TestParse(t *testing.T) {
 			},
 		}
 
-		out, err := parser.Parse(in)
-
-		require.Nil(t, err)
+		out := parser.Parse(in)
 		require.Equal(t, ex, out)
 	})
 
@@ -63,9 +61,7 @@ func TestParse(t *testing.T) {
 			"0 packets received by filter\n" +
 			"0 packets dropped by kernel\n"
 
-		out, err := parser.Parse(in)
-
-		require.Nil(t, err)
+		out := parser.Parse(in)
 		require.Empty(t, out)
 	})
 
@@ -75,9 +71,7 @@ func TestParse(t *testing.T) {
 			"Device             tps    kB_read/s    kB_wrtn/s    kB_read    kB_wrtn\n" +
 			"nvme0n1          72.84    33    329.34      2369.18    594383.7  244  42758633\n"
 
-		out, err := parser.Parse(in)
-
-		require.Nil(t, err)
+		out := parser.Parse(in)
 		require.Empty(t, out)
 	})
 }

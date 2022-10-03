@@ -18,7 +18,7 @@ type CPUState struct {
 }
 
 type Parser interface {
-	Parse(in string) (CPU, error)
+	Parse(in string) CPU
 }
 
 type Logger interface {

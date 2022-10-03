@@ -24,15 +24,15 @@ func New(commandPath string, logg Logger, parser Parser) *IostatRunner {
 	}
 }
 
-func (t *IostatRunner) Run(ctx context.Context, m, n int) chan []DiskIO {
+func (t *IostatRunner) Run(ctx context.Context, warmingUpTime, snapshotPeriod int) chan []DiskIO {
 	ch := make(chan []DiskIO)
 	t.logg.Debug("[IostatRunner] started")
 
 	go func() {
 		defer close(ch)
-		data := make([][]DiskIO, 0, m)
+		data := make([][]DiskIO, 0, warmingUpTime)
 
-		err := t.collect(ctx, m, &data)
+		err := t.collect(ctx, warmingUpTime, &data)
 		if err != nil {
 			t.logg.Error(
 				fmt.Sprintf("[IostatRunner] err: %s", err),
@@ -48,12 +48,12 @@ func (t *IostatRunner) Run(ctx context.Context, m, n int) chan []DiskIO {
 			return
 		case ch <- avg:
 			t.logg.Debug("[IostatRunner] warmed up")
-			data = data[n:]
+			data = data[snapshotPeriod:]
 		}
 
 		// collect
 		for {
-			err = t.collect(ctx, n, &data)
+			err = t.collect(ctx, snapshotPeriod, &data)
 			if err != nil {
 				t.logg.Error(
 					fmt.Sprintf("[IostatRunner] err: %s", err),
@@ -68,7 +68,7 @@ func (t *IostatRunner) Run(ctx context.Context, m, n int) chan []DiskIO {
 				return
 			case ch <- avg:
 				t.logg.Debug("[IostatRunner] collected")
-				data = data[n:]
+				data = data[snapshotPeriod:]
 			}
 		}
 	}()
@@ -90,10 +90,7 @@ func (t *IostatRunner) collect(ctx context.Context, seconds int, data *[][]DiskI
 				return err
 			}
 
-			rows, err := t.parser.Parse(out.String())
-			if err != nil {
-				return err
-			}
+			rows := t.parser.Parse(out.String())
 
 			ios := make([]DiskIO, 0, len(rows))
 			for _, r := range rows {

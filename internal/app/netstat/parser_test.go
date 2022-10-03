@@ -1,7 +1,6 @@
 package appnetstat
 
 import (
-	"errors"
 	"testing"
 
 	"github.com/stretchr/testify/require"
@@ -43,9 +42,7 @@ func TestParse(t *testing.T) {
 			},
 		}
 
-		out, err := parser.Parse(in)
-
-		require.Nil(t, err)
+		out := parser.Parse(in)
 		require.Equal(t, ex, out)
 	})
 
@@ -55,11 +52,7 @@ func TestParse(t *testing.T) {
 			"Device             tps    kB_read/s    kB_wrtn/s    kB_read    kB_wrtn\n" +
 			"nvme0n1          72.84    33    329.34      2369.18    594383.7  244  42758633\n"
 
-		out, err := parser.Parse(in)
-
-		require.NotNil(t, err)
-		var expErr *ErrCannotParseInput
-		require.True(t, errors.As(err, &expErr))
+		out := parser.Parse(in)
 		require.Nil(t, out)
 	})
 }
